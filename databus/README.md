@@ -1,0 +1,50 @@
+# Databus
+
+This component of the ALPR System handles the MQTT communication for real-time data transfer between various parts of the system. The databus is secured using SSL/TLS certificates.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Setup Instructions](#setup-instructions)
+  - [Generating Certificates](#generating-certificates)
+- [License](#license)
+
+## Overview
+
+The MQTT databus enables real-time communication between the different components of the ALPR System, such as the backend server, AI Engine, and GPIO handler. It uses SSL/TLS certificates to ensure secure communication.
+
+
+## Setup Instructions
+
+### Generating Certificates
+
+To secure the MQTT communication, you need to generate SSL/TLS certificates. You can use the `mqtt-cryptogen` tool available at [CuAuPro/mqtt-cryptogen](https://github.com/CuAuPro/mqtt-cryptogen).
+
+1. Clone the `mqtt-cryptogen` repository:
+
+```bash
+git clone https://github.com/CuAuPro/mqtt-cryptogen.git
+cd mqtt-cryptogen
+```
+
+2. Follow the instructions in the cloned repository, using the configuration files provided in `config-certs/`:
+
+```bash
+python <path-to-mqtt-cryptogen>/gen_root_cert.py -p <path-to-databus>/config-certs/root_cert_req.json
+```
+
+```bash
+python <path-to-mqtt-cryptogen>/gen_client_cert.py -p <path-to-databus>/config-certs/client_cert_req.json 
+```
+
+```bash
+python <path-to-mqtt-cryptogen>/extract_pkcs12_certs.py -p <path-to-databus>/config-certs/extract_pkcs12_req.json
+```
+3. Setup (if desired) `acl.conf`.
+
+
+## License <a id='license'></a>
+
+This project is licensed under the MIT License.
+

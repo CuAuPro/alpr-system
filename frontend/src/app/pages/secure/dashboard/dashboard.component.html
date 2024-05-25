@@ -1,0 +1,76 @@
+<div class="card-container">
+  <p-card header="License Plates">
+    <p-toolbar styleClass="p-mb-4">
+      <ng-template pTemplate="left">
+        <button pButton pRipple label="Add" icon="fa-solid fa-plus" class="p-button-info p-mr-2" (click)="addLicensePlate()"></button>
+        <button pButton pRipple icon="fa-solid fa-pen-to-square" class="p-button-secondary p-mr-2" [disabled]="!selectedLicensePlate" (click)="editLicensePlate()"></button>
+        <button pButton pRipple icon="fa-solid fa-trash-can" class="p-button-danger" [disabled]="!selectedLicensePlate" (click)="deleteLicensePlate()"></button>
+      </ng-template>
+      <ng-template pTemplate="right">
+        <span class="p-input-icon-left">
+          <input pInputText type="text" #filterInput (input)="filterGlobal(filterInput)" placeholder="Search..." />
+        </span>
+      </ng-template>
+    </p-toolbar>
+
+    <p-table #dt [value]="filteredLicensePlates" [rows]="10" [paginator]="true" selectionMode="single" [autoLayout]="true" [(selection)]="selectedLicensePlate" [globalFilterFields]="['licensePlate','validFrom','validTo']" currentPageReportTemplate="License Plate {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="licensePlate">License Plate<p-sortIcon field="licensePlate"></p-sortIcon></th>
+          <th pSortableColumn="validFrom">Valid From<p-sortIcon field="validFrom"></p-sortIcon></th>
+          <th pSortableColumn="validTo">Valid To<p-sortIcon field="validTo"></p-sortIcon></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-licensePlate>
+        <tr [pSelectableRow]="licensePlate">
+          <td>{{licensePlate.licensePlate}}</td>
+          <td>{{licensePlate.validFrom | date:'yyyy-MM-dd'}}</td>
+          <td>{{licensePlate.validTo | date:'yyyy-MM-dd'}}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <div class="p-d-flex p-ai-center p-jc-between">
+          There are {{filteredLicensePlates ? filteredLicensePlates.length : 0}} license plates in the database.
+        </div>
+      </ng-template>
+    </p-table>
+
+    <p-dialog [(visible)]="showDialog" [style]="{width: '450px'}" header="License Plate Details" [modal]="true" styleClass="p-fluid edit-dialog" (onHide)="hideDialog()">
+      <ng-template pTemplate="content">
+        <form [formGroup]="licensePlateForm">
+          <div class="p-field">
+            <label for="license-plate-input">License Plate</label>
+            <div></div>
+            <input 
+              type="text" 
+              pInputText 
+              id="license-plate-input" 
+              formControlName="licensePlate" 
+              required 
+              autofocus 
+              [ngClass]="{'p-invalid-border': submitted && licensePlateForm.controls['licensePlate'].invalid}" 
+              pTooltip="Please enter a valid license plate" 
+              tooltipPosition="top"
+            />
+            <small class="p-invalid-text" *ngIf="submitted && licensePlateForm.controls['licensePlate'].invalid">
+              License plate is required.
+            </small>
+          </div>
+          <div class="p-field">
+            <label for="valid-from-input">Valid From</label>
+            <p-calendar id="valid-from-input" formControlName="validFrom" dateFormat="yy-mm-dd" showIcon appendTo="body"></p-calendar>
+          </div>
+          <div class="p-field">
+            <label for="valid-to-input">Valid To</label>
+            <p-calendar id="valid-to-input" formControlName="validTo" dateFormat="yy-mm-dd" showIcon appendTo="body"></p-calendar>
+          </div>
+        </form>
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveLicensePlate()"></button>
+      </ng-template>
+    </p-dialog>
+  </p-card>
+  <p-confirmDialog [style]="{width: '450pxpx'}"></p-confirmDialog>
+</div>

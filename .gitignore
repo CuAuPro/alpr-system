@@ -1,0 +1,9 @@
+## Certificate files
+**.ca
+**.crt
+**.key
+**.der 
+**.pem 
+
+# Environment files
+**.env

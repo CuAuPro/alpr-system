@@ -1,0 +1,21 @@
+.welcome-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.welcome-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.welcome-description {
+    font-size: 1.2rem;
+    color: #6c757d; /* Gray color */
+}
+
+.buttons {
+    margin-top: 20px;
+}

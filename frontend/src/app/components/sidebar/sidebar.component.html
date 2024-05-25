@@ -1,0 +1,43 @@
+<aside class="sidebar shadow-sm">
+
+  <div class="sidebar-profile d-flex flex-column justify-content-center pt-5 pb-3">
+    <div class="picture-wrapper mb-4">
+      <div class="user-picture m-auto">
+        <img src="./assets/img/user.png" class="img-fluid" alt="">
+      </div>
+    </div>
+    <div class="profile-details text-center pb-4">
+      <p class="mb-0 text-uppercase name">{{ user?.firstName }} {{ user?.lastName }}</p>
+      <small class="text-uppercase role">{{ user?.role }}</small>
+    </div>
+  </div>
+  <div class="sidebar-search pt-1 pb-1 pl-3 pr-3">
+    <input type="search" class="form-control rounded-pill" name="search" placeholder="Search ...">
+  </div>
+  <nav class="sidebar-menu pt-3 pb-3">
+    <div class="menu-header mt-3 mb-2">
+      Navigation
+    </div>
+    <ul class="menu-items">
+      <li >
+        <a routerLink="/dashboard" routerLinkActive="active">
+          <i class="fa fa-tv"></i>
+          <span>Dashboard</span>
+          <!-- <span class="badge badge-warning rounded-0 text-dark p-1">NEW</span> -->
+        </a>
+      </li>
+      <li>
+        <a routerLink="/monitor" routerLinkActive="active">
+          <i class="fa-solid fa-satellite-dish"></i>
+          <span>Monitor</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/analytics" routerLinkActive="active">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Analytics</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</aside>

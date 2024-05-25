@@ -1,0 +1,12 @@
+{
+    "store_folder":         "generated-alpr/",
+    "new_passcode":         "123456",
+    "validity_period":      "10 years",
+
+    "country":              "SI",
+    "state":                "Ljubljana",
+    "locality":             "Ljubljana",
+    "organization":         "cuaupro",
+    "organizational_unit":  "edge",
+    "common_name":          "cuaupro.dev"
+}

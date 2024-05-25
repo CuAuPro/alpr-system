@@ -1,0 +1,160 @@
+.wrapper {
+  main {
+    position: relative;
+
+    .sidebar {
+      height: 100%;
+      width: $sidebar-width;
+      position: absolute;
+      transition: left .3s ease;
+      left: -$sidebar-width;
+      top: 0;
+      z-index: 111;
+      overflow: auto;
+
+      >div {
+        border-bottom: 1px solid;
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      .sidebar-profile {
+
+        .user-picture {
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          overflow: hidden;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+          }
+        }
+
+        .profile-details {
+          .name {
+            font-size: .9rem;
+            font-weight: 800;
+          }
+
+          .role {
+            font-size: .7rem;
+            letter-spacing: 1px;
+            font-weight: 700;
+          }
+        }
+      }
+
+      .sidebar-search {
+        display: none;
+      }
+
+      .sidebar-menu {
+        >div {
+          padding: 0 1.5rem;
+        }
+
+        .menu-header {
+          padding: 0 1.5rem;
+          font-size: .75rem;
+          text-transform: uppercase;
+          font-weight: 700;
+        }
+
+        ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+
+          li {
+            display: block;
+
+            a {
+              text-decoration: none;
+              display: flex;
+              align-items: center;
+              width: 100%;
+              height: 45px;
+              line-height: 45px;
+              padding: 0 1.5rem;
+              font-size: 0.8rem;
+              letter-spacing: 0px;
+              font-weight: 600;
+
+              i {
+                @extend .icon-style;
+                font-size: 1rem;
+              }
+
+              span {
+                color: inherit;
+                margin-left: 1rem;
+              }
+            }
+          }
+        }
+       
+      }
+    }
+
+    @media (min-width: 768px) {
+      .sidebar {
+        position: static;
+        height: 100%;
+      }
+    }
+  }
+
+  &.pinned-sidebar {
+    @media (min-width: 768px) {
+      .navbar-header{
+        width: $sidebar-pinned-wdth!important;
+        span{
+          display: none!important;
+        }
+      }
+
+      .sidebar {
+        width: $sidebar-pinned-wdth;
+
+        .sidebar-profile {
+
+          .user-picture {
+            width: 40px;
+            height: 40px;
+          }
+
+        }
+
+        .profile-details,
+        .menu-header,
+        .view-source {
+          display: none;
+        }
+
+        .sidebar-menu {
+          ul a {
+            padding: .5rem;
+            justify-content: center;
+
+            span {
+              display: none;
+            }
+          }
+        }
+      }
+
+    }
+  }
+
+  &.toggeled-sidebar {
+    .sidebar {
+      left: 0;
+    }
+  }
+}

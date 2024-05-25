@@ -1,0 +1,28 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "resolveJsonModule": true,
+        "lib": ["ES2022"],
+        "module": "esnext",
+        "moduleResolution": "node",
+        "target": "ES2022",        
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": "src",
+        "esModuleInterop": true,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "sourceMap": true,
+        "outDir": "./dist",
+        "allowJs": true,
+        "skipLibCheck": true,
+        "paths": {
+            "*": [
+                "./node_modules/*",
+                "./src/types/*",
+            ]
+        }        
+    },
+    "include": [
+        "./src/**/*"
+    ]
+}

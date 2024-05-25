@@ -1,0 +1,91 @@
+<nav class="navbar navbar-expand-md fixed-top navbar-dark flex-fill">
+  <!-- <button class="sidebar-toggler ml-4" type="button">
+    <i class="fa fa-navicon"></i>
+  </button> -->
+  <!-- header -->
+  <div class="navbar-header pl-2 pr-2 ml-3 text-center">
+    <a class="navbar-brand m-0 w-100" href="#">
+      <!-- <i class="fa fa-flash mr-1"></i> -->
+      <img src="./assets/img/logo.png" alt="lightning logo" width="35px">
+      <span class="ml-1">Lightning</span>
+    </a>
+  </div>
+  <!-- sidebar toggler -->
+  <ng-container *ngIf="isLoggedIn">
+    <div class="sidebar-toggler ml-auto mr-3">
+      <a class="btn nav-link" (click)="toggleSidebar()"><i class="fa fa-bars"></i></a>
+    </div>
+    <!-- right menu toggler -->
+    <div class="nav-toggler-right mr-4 d-md-none">
+      <button class="" type="button" (click)="isCollapsed = !isCollapsed" [attr.aria-expanded]="!isCollapsed"
+        aria-controls="collapseBasic">
+        <!-- <span class="navbar-toggler-icon"></span> -->
+        <img src="./assets/img/user.png" class="img-fluid" alt="">
+      </button>
+      <span class="user-profile nav-alert bg-danger"></span>
+    </div>
+    <!-- left box -->
+    <ul class="navbar-nav flex-fill mt-1 align-items-center left-nav">
+      <li class="nav-item navicon">
+        <a class="btn nav-link" (click)="toggleSidebarPin()"><i class="fa fa-bars"></i></a>
+      </li>
+      <li class="nav-item flex-fill">
+        <input class="form-control navbar-search" type="text" placeholder="Search . . .">
+      </li>
+    </ul>
+
+    <!-- right menu -->
+    <div class="collapse navbar-collapse right-nav" id="collapseBasic" [collapse]="isCollapsed">
+
+
+      <ul class="navbar-nav ">
+        <li class="nav-item">
+          <a class="btn nav-link">
+            <i class="far fa-bell"></i>
+            <span class="link-text">Alerts</span>
+            <!-- <span class="badge badge-pill ba dge-danger">3</span> -->
+            <span class="nav-alert notifications"></span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="btn nav-link">
+            <i class="far fa-envelope"></i>
+            <span class="link-text">Messages</span>
+            <!-- <span class="badge badge-pill badge-success">5</span> -->
+            <span class="nav-alert messages"></span>
+          </a>
+        </li>
+        <!-- <li class="nav-item">
+          <a class="btn nav-link">
+            <i class="far fa-user"></i>
+            <span class="link-text">Profile</span>
+          </a>
+        </li> -->
+
+       <div class="btn-group" dropdown #dropdown="bs-dropdown" [autoClose]="true">
+        <button id="button-basic" dropdownToggle type="button" 
+           class="btn btn-outline-primary dropdown-toggle"
+           aria-controls="dropdown-basic">
+           <i class="far fa-user"></i>
+           <span class="link-text"></span>
+        </button>
+        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu dropdown-menu-right"
+           role="menu" aria-labelledby="button-basic">
+           <li role="menuitem"><a class="dropdown-item" (click)="navigateChangePassword()">Change password</a></li>
+           <li role="menuitem"><a class="dropdown-item" (click)="logout()">Log out</a></li>
+        </ul>
+      </div>
+
+        <li class="nav-item">
+          <a class="btn nav-link">
+            <i class="fas fa-cog"></i>
+            <span class="link-text">Setting</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+  </ng-container>
+
+
+</nav>

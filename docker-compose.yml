@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  frontend:
+    container_name: frontend  # Name the frontend container
+    build:
+      context: ./  # Path to the frontend Dockerfile
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "443:443"  # Map host port 443 to container port 443 for HTTPS
+    depends_on:
+      - backend  # Ensure the backend service starts before the frontend
+    networks:
+      - alpr-network  # Connect to the alpr-network
+    deploy:
+      resources:
+        limits:
+          memory: 64M  # Limit the maximum memory usage
+        reservations:
+          memory: 32M  # Reserve memory
+
+  backend:
+    container_name: backend  # Name the backend container
+    build:
+      context: ./backend  # Path to the backend Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "8443:443"  # Map host port 8443 to container port 443 for HTTPS
+    environment:
+      - MQTT_BROKER=databus:8883  # Set the MQTT broker address
+      - MQTT_SSL=true  # Enable SSL for MQTT
+    depends_on:
+      - databus  # Ensure the databus service starts before the backend
+    networks:
+      - alpr-network  # Connect to the alpr-network
+    deploy:
+      resources:
+        limits:
+          memory: 128M  # Limit the maximum memory usage to 128MB
+        reservations:
+          memory: 90M  # Reserve 90MB of memory
+    volumes:
+      - /var/opt/docker/alpr-system/database:/app/backend/database
+      
+
+  databus:
+    container_name: databus  # Name the databus container
+    restart: unless-stopped  # Restart policy for the databus container
+    build:
+      context: ./databus  # Path to the databus Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "8883:8883"  # Map host port 8883 to container port 8883 for MQTT
+    networks:
+      - alpr-network  # Connect to the alpr-network
+    hostname: "databus"  # Set the hostname for the databus container
+    deploy:
+      resources:
+        limits:
+          memory: 64M  # Limit the maximum memory usage
+        reservations:
+          memory: 32M  # Reserve memory
+
+networks:
+  alpr-network:

@@ -1,0 +1,16 @@
+<!-- app.component.html -->
+
+<p-toast></p-toast>
+
+<div class="wrapper default-theme" [ngClass]="getClasses()">
+  <app-navbar [isLoggedIn]="authService.isLoggedIn()"></app-navbar>
+  <main>
+    <app-sidebar *ngIf="authService.isLoggedIn()"></app-sidebar>
+    <div class="pages container-fluid pt-4 pb-4 pl-4 pr-4">
+      <router-outlet></router-outlet>
+      <hr *ngIf="authService.isLoggedIn()">
+      <app-footer *ngIf="authService.isLoggedIn()"></app-footer>
+    </div>
+    <div class="overlay" (click)="toggleSidebar()" *ngIf="authService.isLoggedIn()"></div>
+  </main>
+</div>

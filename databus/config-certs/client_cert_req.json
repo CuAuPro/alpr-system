@@ -1,0 +1,75 @@
+{
+    "store_folder":         "generated-alpr/",
+    "signing_cert_path":    "generated-alpr/master.p12",
+    "passcode":             "123456",
+
+    "clients": [
+        {
+            "new_alias":            "databus-broker",
+            "validity_period":      "10 years",
+            "new_passcode":         "123456",
+            "country":              "SI",
+            "state":                "Ljubljana",
+            "locality":             "Ljubljana",
+            "organization":         "cuaupro",
+            "organizational_unit":  "edge",
+            "dns_names":            ["localhost"],
+            "ipv4_addresses":       ["127.0.0.1"],
+            "ipv6_addresses":       []
+        },
+        {
+            "new_alias":            "databus-admin",
+            "validity_period":      "10 years",
+            "new_passcode":         "123456",
+            "country":              "SI",
+            "state":                "Ljubljana",
+            "locality":             "Ljubljana",
+            "organization":         "cuaupro",
+            "organizational_unit":  "edge",
+            "dns_names":            [],
+            "ipv4_addresses":       [],
+            "ipv6_addresses":       []
+        },
+        {
+            "new_alias":            "databus-backend",
+            "validity_period":      "10 years",
+            "new_passcode":         "123456",
+            "country":              "SI",
+            "state":                "Ljubljana",
+            "locality":             "Ljubljana",
+            "organization":         "cuaupro",
+            "organizational_unit":  "edge",
+            "dns_names":            ["localhost"],
+            "ipv4_addresses":       ["127.0.0.1"],
+            "ipv6_addresses":       []
+        },
+        {
+            "new_alias":            "databus-gpio-handler",
+            "validity_period":      "10 years",
+            "new_passcode":         "123456",
+            "country":              "SI",
+            "state":                "Ljubljana",
+            "locality":             "Ljubljana",
+            "organization":         "cuaupro",
+            "organizational_unit":  "edge",
+            "dns_names":            ["localhost"],
+            "ipv4_addresses":       ["127.0.0.1"],
+            "ipv6_addresses":       []
+        },
+        {
+            "new_alias":            "databus-ai-engine",
+            "validity_period":      "10 years",
+            "new_passcode":         "123456",
+            "country":              "SI",
+            "state":                "Ljubljana",
+            "locality":             "Ljubljana",
+            "organization":         "cuaupro",
+            "organizational_unit":  "edge",
+            "dns_names":            ["localhost"],
+            "ipv4_addresses":       ["127.0.0.1"],
+            "ipv6_addresses":       []
+        }
+
+    ]
+
+}

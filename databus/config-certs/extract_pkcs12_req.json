@@ -1,0 +1,56 @@
+{
+    "clients": [
+        {
+            "path":     "generated-alpr/",
+            "alias":    "databus-broker",
+            "passcode": "123456",
+            "new_passcode": "",
+            "ca":       true,
+            "crt":      true,
+            "key":      true
+
+        },
+        {
+            "path":     "generated-alpr/",
+            "alias":    "databus-admin",
+            "passcode": "123456",
+            "new_passcode": "",
+            "ca":       true,
+            "crt":      true,
+            "key":      true
+
+        },
+        {
+            "path":     "generated-alpr/",
+            "alias":    "databus-backend",
+            "passcode": "123456",
+            "new_passcode": "",
+            "ca":       true,
+            "crt":      true,
+            "key":      true
+
+        },
+        {
+            "path":     "generated-alpr/",
+            "alias":    "databus-gpio-handler",
+            "passcode": "123456",
+            "new_passcode": "",
+            "ca":       true,
+            "crt":      true,
+            "key":      true
+
+        },
+        {
+            "path":     "generated-alpr/",
+            "alias":    "databus-ai-engine",
+            "passcode": "123456",
+            "new_passcode": "",
+            "ca":       true,
+            "crt":      true,
+            "key":      true
+
+        }
+        
+    ]
+
+}
