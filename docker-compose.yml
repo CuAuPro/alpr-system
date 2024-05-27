@@ -1,6 +1,8 @@
 version: '3.8'
 
 services:
+
+
   frontend:
     container_name: frontend  # Name the frontend container
     build:
@@ -18,6 +20,7 @@ services:
           memory: 64M  # Limit the maximum memory usage
         reservations:
           memory: 32M  # Reserve memory
+
 
   backend:
     container_name: backend  # Name the backend container
@@ -41,7 +44,29 @@ services:
           memory: 90M  # Reserve 90MB of memory
     volumes:
       - /var/opt/docker/alpr-system/database:/app/backend/database
-      
+
+
+  gpio-handler:
+    container_name: gpio-handler  # Name the databus container
+    build:
+      context: ./gpio-handler  # Path to the databus Dockerfile
+      dockerfile: Dockerfile
+    depends_on:
+      - databus  # Ensure the databus service starts before the backend
+    networks:
+      - alpr-network  # Connect to the alpr-network
+    runtime: nvidia
+    environment:
+      - JETSON_MODEL_NAME=JETSON_NANO
+    devices:
+      - /dev/gpiochip0
+    deploy:
+      resources:
+        limits:
+          memory: 64M  # Limit the maximum memory usage
+        reservations:
+          memory: 32M  # Reserve memory
+
 
   databus:
     container_name: databus  # Name the databus container
@@ -60,6 +85,7 @@ services:
           memory: 64M  # Limit the maximum memory usage
         reservations:
           memory: 32M  # Reserve memory
+
 
 networks:
   alpr-network:

@@ -11,7 +11,7 @@ import MqttProxy from './mqtt/mqtt-proxy.js';  // Adjust the path as necessary
 // Define your MQTT connection parameters
 const mqttHost = process.env.MQTT_BROKER || 'localhost:8883'; // Use MQTT_BROKER if set, otherwise default to 'localhost:8883'
 
-const mqttSubToTopics = ['admin/test', 'alpr/req/lp']; // Array of topics to subscribe to
+const mqttSubToTopics = ['admin/test', 'alpr/ramp/req']; // Array of topics to subscribe to
 const username = process.env.MQTT_USERNAME !== undefined ? process.env.MQTT_USERNAME : '';
 const password = process.env.MQTT_PASSWORD !== undefined ? process.env.MQTT_PASSWORD : '';
 const mqttSSL = process.env.MQTT_SSL !== undefined ? process.env.MQTT_SSL === 'true' : true; // Default to true if not specified, convert string to boolean

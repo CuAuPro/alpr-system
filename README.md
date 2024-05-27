@@ -143,8 +143,9 @@ You also need to create persistend database file. To create a directory in and s
 ```bash
 sudo mkdir -p /var/opt/docker/alpr-system/database
 ```
+2. Copy initialized `alpr.db` to `/var/opt/docker/alpr-system/database`.
 
-2. Set Up Volume: After creating the directory, you can specify a volume for the backend alpr.db in your Docker Compose file. Add the following volume configuration under the backend service in your `docker-compose.yml` file:
+3. Set Up Volume: After creating the directory, you can specify a volume for the backend alpr.db in your Docker Compose file. Add the following volume configuration under the backend service in your `docker-compose.yml` file:
 ```yaml
 volumes:
   - /var/opt/docker/alpr-system/database:/app/backend/database
