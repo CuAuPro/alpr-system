@@ -10,16 +10,16 @@ The GPIO Handler is a component of the Automatic License Plate Recognition Syste
   - [Generating Certificates](#generating-certificates)
 - [License](#license)
 
-## Overview
+## Overview <a id='overview'></a>
 
 The GPIO Handler subscribes to specific MQTT topics and controls GPIO pins on a Jetson Nano based on the received messages. It uses SSL/TLS certificates to secure the communication with the MQTT broker.
 
-## Features
+## Features <a id='features'></a>
 - Subscribes to MQTT topics to control GPIO pins.
 - Configurable via JSON configuration files.
 - Secure communication with the MQTT broker (Databus) using SSL/TLS.
 
-## Setup Instructions
+## Setup Instructions <a id='setup-instructions'></a>
 
 ### Configuration
 
@@ -57,7 +57,7 @@ def handle_mqtt(client, userdata, message):
     except Exception as e:
         logging.error("Exception at handle_mqtt: {}".format(e))
 ```
-### Generating Certificates
+### Generating Certificates <a id='generating-certificates'></a>
 
 To secure the MQTT communication, you need to generate SSL/TLS certificates. You can use the `mqtt-cryptogen` tool available at [CuAuPro/mqtt-cryptogen](https://github.com/CuAuPro/mqtt-cryptogen).
 

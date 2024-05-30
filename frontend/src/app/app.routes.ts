@@ -27,12 +27,15 @@ export const routes: Routes = [
 
     { path: 'welcome', component: WelcomeComponent },
     { path: 'signin', component: SignInComponent },
-    { path: 'signup', component: SignupComponent },
+    // { path: 'signup', component: SignupComponent },
     { path: 'change-password', component: ChangePasswordComponent, canActivate: [authGuard] },
 
 
     {path: 'dashboard', component: DashboardComponent, canActivate: [authGuard]},
     {path: 'analytics', component: AnalyticsComponent, canActivate: [authGuard]},
     {path: 'monitor', component: MonitorComponent, canActivate: [authGuard]},
+
+    // Wildcard route for a 404 page
+    { path: '**', redirectTo: '/welcome', pathMatch: 'full' }
 
   ];

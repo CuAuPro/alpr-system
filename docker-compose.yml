@@ -86,6 +86,31 @@ services:
         reservations:
           memory: 32M  # Reserve memory
 
+  ai-engine:
+    container_name: ai-engine
+    build:
+      context: ./ai-engine  # Path to the Dockerfile
+      dockerfile: Dockerfile
+    depends_on:
+      - databus  # Ensure the databus service starts before the backend
+    runtime: nvidia
+    networks:
+      - alpr-network  # Connect to the alpr-network
+    ports:
+      - "8554:8554"  # Example RTSP server port
+    devices:
+      - /dev/video0
+    # environment:
+    #   - NVIDIA_DRIVER_CAPABILITIES=all
+    #   - DISPLAY=:0  # Necessary for accessing the camera
+    # volumes:
+    #   - /tmp/.X11-unix/:/tmp/.X11-unix  # Necessary for accessing the camera
+    deploy:
+      resources:
+        limits:
+          memory: 2.5G
+        reservations:
+          memory: 2G
 
 networks:
   alpr-network:

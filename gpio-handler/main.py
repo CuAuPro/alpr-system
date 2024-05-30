@@ -38,6 +38,7 @@ if __name__ == "__main__":
                 'tls_keyfile': './certs/databus-gpio-handler.key',
              }
     mqtt_engine = MQTTEngine(config)
+    mqtt_engine.client.tls_insecure_set(True)
     mqtt_engine.connect()
     mqtt_engine.subscribe("alpr/ramp/cmd")
     mqtt_engine.client.on_message = handle_mqtt

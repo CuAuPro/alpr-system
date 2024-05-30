@@ -114,7 +114,7 @@ For detailed instructions on Databus setup and usage, refer to `databus/README.m
 For detailed instructions on AI setup and usage, refer to `ai-engine/README.md`.
 
 ### Python GPIO <a id='gpio-handler'></a>
-For detailed instructions on GPIO setup and usage, refer to gpio-handler/README.md.
+For detailed instructions on GPIO setup and usage, refer to `gpio-handler/README.md`.
 
 ## Environment Variables <a id='environment-variables'></a>
 
