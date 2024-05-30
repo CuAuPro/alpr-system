@@ -20,6 +20,10 @@ This directory contains the backend code for the Automatic License Plate Recogni
 
 The Swagger API documentation for the backend is defined in the `swagger.yaml` file located in the `src/routes` directory. 
 
+| ![](/docs/img/backend-swagger.jpeg) |
+|:--:| 
+| Dashboard. |
+
 To ensure the correctness of the Swagger API specification, run the following command:
 
 ```bash

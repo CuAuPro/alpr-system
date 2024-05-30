@@ -2,6 +2,24 @@
 
 This directory contains the frontend code for the Automatic License Plate Recognition System Management. It is built with Angular.
 
+| ![](/docs/img/frontend-welcome.jpeg) |
+|:--:| 
+| ALPR Manager – Welcome. |
+
+| ![](/docs/img/frontend-signin.jpeg) |
+|:--:| 
+| ALPR Manager – Sign In. |
+
+
+| ![](/docs/img/frontend-dashboard.jpeg) |
+|:--:| 
+| ALPR Manager – UI. |
+
+
+| ![](/docs/img/frontend-dashboard-addlp.jpeg) |
+|:--:| 
+| ALPR Manager – Add License Plate. |
+
 ## Features
 
 - User authentication

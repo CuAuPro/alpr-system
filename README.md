@@ -26,6 +26,15 @@ This project is an Automatic License Plate Recognition System Management built w
 
 The ALPR System is designed to provide a comprehensive solution for license plate recognition and management. It utilizes a combination of backend APIs, frontend interfaces, AI image recognition, and hardware interfacing to achieve its goals.
 
+| ![](/docs/img/system-schematic.jpeg) |
+|:--:| 
+| Schematic representation of ALPR System. |
+
+
+| ![](/docs/img/frontend-dashboard.jpeg) |
+|:--:| 
+| ALPR Manager – UI. |
+
 ## Features <a id='features'></a>
 
 - User authentication and authorization
