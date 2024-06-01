@@ -86,5 +86,5 @@ python <path-to-mqtt-cryptogen>/extract_pkcs12_certs.py -p <path-to-databus>/con
 
 ## License <a id='license'></a>
 
-This project is licensed under the MIT License.
+This project is licensed under the terms specified in the [LICENSE](../LICENSE) file.
 

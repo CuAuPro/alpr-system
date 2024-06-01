@@ -168,5 +168,4 @@ docker-compose up --build
 ```
 ## License <a id='license'></a>
 
-This project is licensed under the MIT License.
-
+This project is licensed under the terms specified in the [LICENSE](../LICENSE) file.

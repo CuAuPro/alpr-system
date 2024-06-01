@@ -91,6 +91,6 @@ The application will run on `http://localhost:4200`.
 This repository is based on the following source: https://github.com/azouaoui-med/lightning-admin-angular.
 
 
-## License
+## License 
 
-This project is licensed under the MIT License.
+This project is licensed under the terms specified in the [LICENSE](../LICENSE) file.

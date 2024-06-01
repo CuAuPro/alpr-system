@@ -154,4 +154,5 @@ JWT_SECRET=your_jwt_secret
 
 
 ## License
-This project is licensed under the MIT License.
+
+This project is licensed under the terms specified in the [LICENSE](../LICENSE) file.

@@ -10,14 +10,14 @@ This component of the ALPR System handles the MQTT communication for real-time d
   - [Generating Certificates](#generating-certificates)
 - [License](#license)
 
-## Overview
+## Overview  <a id='overview'></a>
 
 The MQTT databus enables real-time communication between the different components of the ALPR System, such as the backend server, AI Engine, and GPIO handler. It uses SSL/TLS certificates to ensure secure communication.
 
 
-## Setup Instructions
+## Setup Instructions <a id='setup-instructions'></a>
 
-### Generating Certificates
+### Generating Certificates <a id='generating-certificates'></a>
 
 To secure the MQTT communication, you need to generate SSL/TLS certificates. You can use the `mqtt-cryptogen` tool available at [CuAuPro/mqtt-cryptogen](https://github.com/CuAuPro/mqtt-cryptogen).
 
@@ -46,5 +46,5 @@ python <path-to-mqtt-cryptogen>/extract_pkcs12_certs.py -p <path-to-databus>/con
 
 ## License <a id='license'></a>
 
-This project is licensed under the MIT License.
+This project is licensed under the terms specified in the [LICENSE](../LICENSE) file.
 
