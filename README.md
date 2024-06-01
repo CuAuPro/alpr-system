@@ -1,6 +1,6 @@
 # Automatic License Plate Recognition System (ALPR System)
 
-This project is an Automatic License Plate Recognition System Management built with Angular for the frontend and Node.js for the backend. It is designed to provide a robust starting point for developing a full-stack application with user authentication, admin management, and other features. The system also includes components for MQTT communication, AI-based image recognition, and GPIO interfacing.
+This project is an Automatic License Plate Recognition (ALPR) system designed for edge devices and optimized for high performance. It includes an AI Engine for image recognition, a frontend and backend for management, MQTT Databus for communication, and GPIO interfacing for hardware control.
 
 ## Table of Contents
 
@@ -8,7 +8,6 @@ This project is an Automatic License Plate Recognition System Management built w
 - [Features](#features)
 - [Technology Stack](#technology-stack)
 - [Setup Instructions](#setup-instructions)
-  - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Database Initialization](#database-initialization)
   - [Running the Application](#running-the-application)
@@ -24,7 +23,7 @@ This project is an Automatic License Plate Recognition System Management built w
 
 ## Overview
 
-The ALPR System is designed to provide a comprehensive solution for license plate recognition and management. It utilizes a combination of backend APIs, frontend interfaces, AI image recognition, and hardware interfacing to achieve its goals.
+The ALPR System is designed to provide a comprehensive solution for license plate recognition and management. It utilizes a combination of AI image recognition, backend APIs, frontend interfaces, and hardware interfacing to deliver a full-featured ALPR system.
 
 | ![](/docs/img/system-schematic.jpeg) |
 |:--:| 
@@ -37,11 +36,15 @@ The ALPR System is designed to provide a comprehensive solution for license plat
 
 ## Features <a id='features'></a>
 
-- User authentication and authorization
-- Admin management with CRUD operations
-- MQTT communication
-- AI-based license plate recognition
-- GPIO interfacing for hardware control
+ - Designed for Edge Devices: Optimized for Jetson Nano.
+ - High Performance: **AI inference up to 40 FPS**.
+ - Easy Integration: Seamlessly integrates into existing systems.
+ - Admin Management: User authentication and management (Angular and Node.js).
+ - MQTT Communication: Efficient message queuing and data transfer.
+ - AI-based License Plate Recognition: High accuracy LPR and OCR.
+ - GPIO Interfacing: Control hardware such as parking ramps.
+ - Secure: All data is encrypted with HTTPS and Databus over TLS.
+ - Easy Deployment: Packed as Docker Compose.
 
 ## Technology Stack <a id='technology-stack'></a>
 
@@ -53,21 +56,12 @@ The ALPR System is designed to provide a comprehensive solution for license plat
 
 ## Setup Instructions <a id='setup-instructions'></a>
 
-### Prerequisites
-
-- Node.js
-- Angular CLI
-- SQLite
-- Docker (optional, for containerized deployment)
-- MQTT broker (if using MQTT)
-- Python (if using Python scripts)
-
 ### Installation <a id='installation'></a>
 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/alpr-system.git
+git clone https://github.com/CuAuPro/alpr-system.git
 cd alpr-system
 ```
 
