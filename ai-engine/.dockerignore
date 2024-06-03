@@ -1,0 +1,4 @@
+certs
+# Ignore auxiliary files
+*.md
+helpers.txt

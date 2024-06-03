@@ -1,2 +1,4 @@
 node_modules/*
 dist/*
+# Ignore the database, because it might contain sensitive data
+database/*

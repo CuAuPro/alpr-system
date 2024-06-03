@@ -1,0 +1,2 @@
+# Ignore the cert folder, as certificates should not be embedded into the image.
+certs
