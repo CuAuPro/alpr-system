@@ -13,7 +13,7 @@ services:
       - backend  # Ensure the backend service starts before the frontend
     volumes:
       # Bind volume with certificates at runtime
-      - ./frontend/certs:/app/frontend/certs
+      - ./frontend/certs:/app/certs
     networks:
       - alpr-network  # Connect to the alpr-network
     deploy:
