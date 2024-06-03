@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+
+  - package-ecosystem: 'npm'
+    directory: '/frontend'
+    schedule:
+      interval: 'monthly'
+
+  - package-ecosystem: 'npm'
+    directory: '/backend'
+    schedule:
+      interval: 'monthly'
+
+  - package-ecosystem: 'pip'
+    directory: '/gpio-handler'
+    schedule:
+      interval: 'monthly'
+
+  - package-ecosystem: 'pip'
+    directory: '/ai-engine'
+    schedule:
+      interval: 'monthly'
