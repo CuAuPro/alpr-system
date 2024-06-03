@@ -1,0 +1,30 @@
+name: Build and Push Frontend
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+  pull_request:
+    types: [ opened, synchronize ]
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+
+jobs:
+
+  # Build and push Docker image
+  build-service:
+    name: Build and Push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: ./.github/workflows/build.yaml
+        with:
+          platform: linux/arm64
+          service: backend
+          dockerfile: ./backend/Dockerfile
+          docker_repository: frontend
+          push: ${{ github.event_name != 'pull_request' }}
