@@ -40,7 +40,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           # todo changeme
-          images: CuAuPro/ai-engine
+          images: CuAuPro/alpr-ai-engine
           flavor: |
             latest=true
           tags: |

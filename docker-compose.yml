@@ -5,6 +5,7 @@ services:
 
   frontend:
     container_name: frontend  # Name the frontend container
+    image: cuaupro/alpr-frontend:latest
     build:
       context: ./frontend  # Path to the frontend Dockerfile
     ports:
@@ -26,6 +27,7 @@ services:
 
   backend:
     container_name: backend  # Name the backend container
+    image: cuaupro/alpr-backend:latest
     build:
       context: ./backend  # Path to the backend Dockerfile
     ports:
@@ -51,6 +53,7 @@ services:
 
   gpio-handler:
     container_name: gpio-handler  # Name the databus container
+    image: cuaupro/alpr-gpio-handler:latest
     build:
       context: ./gpio-handler  # Path to the databus Dockerfile
       dockerfile: Dockerfile
@@ -96,6 +99,7 @@ services:
 
   ai-engine:
     container_name: ai-engine
+    image: cuaupro/alpr-ai-engine:latest
     build:
       context: ./ai-engine  # Path to the Dockerfile
     depends_on:

@@ -39,7 +39,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           # todo changeme
-          images: CuAuPro/gpio-handler
+          images: CuAuPro/alpr-gpio-handler
           flavor: |
             latest=true
           tags: |

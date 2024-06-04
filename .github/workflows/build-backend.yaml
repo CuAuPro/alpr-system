@@ -26,5 +26,5 @@ jobs:
           platform: linux/arm64
           service: backend
           dockerfile: ./backend/Dockerfile
-          docker_repository: frontend
+          docker_repository: alpr-backend
           push: ${{ github.event_name != 'pull_request' }}
