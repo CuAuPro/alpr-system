@@ -9,11 +9,11 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
-# Copy requirements.txt and install Python dependencies
-COPY . /app
-RUN pip3 install --no-cache-dir -r /app/requirements.txt
-
 # Set the working directory
 WORKDIR /app
+
+# Copy requirements.txt and install Python dependencies
+COPY . .
+RUN pip3 install -r requirements.txt
 
 CMD [ "python3", "./main.py"]

@@ -45,8 +45,19 @@ Use OpenSSL to generate a self-signed certificate:
 
 ```bash
 mkdir certs
-openssl req -nodes -new -x509 -keyout certs/https/key.pem -out certs/https/cert.pem -days 3650
+openssl req -nodes -new -x509 -keyout key.pem -out cert.pem -days 3650
 ```
+
+Then copy certificates to docker volume folder:
+
+```bash
+cp cert.pem /var/opt/docker/alpr-system/backend/certs/https/
+cp key.pem /var/opt/docker/alpr-system/backend/certs/https/
+
+cp cert.pem /var/opt/docker/alpr-system/frontend/certs/https/
+cp key.pem /var/opt/docker/alpr-system/frontend/certs/https/
+```
+
 
 ### Installation
 
