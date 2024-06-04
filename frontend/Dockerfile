@@ -1,9 +1,9 @@
 # Stage 1: Build the frontend
 FROM node:18-alpine AS client
 WORKDIR /app
-COPY ./frontend/package.json ./frontend/package-lock.json ./
+COPY ./package.json ./package-lock.json ./
 RUN npm install
-COPY ./frontend/ .
+COPY . .
 RUN npm run build
 
 # Use a small Nginx image as a base
@@ -13,9 +13,7 @@ RUN mkdir -p /usr/share/nginx/html
 COPY --from=client /app/dist/frontend/browser /usr/share/nginx/html
 
 # Copy Nginx configuration
-COPY ./frontend/nginx.conf /etc/nginx/nginx.conf
-
-COPY ./backend/certs/https /etc/nginx/certs
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
 # Expose necessary ports
 EXPOSE 443

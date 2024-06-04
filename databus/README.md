@@ -41,8 +41,19 @@ python <path-to-mqtt-cryptogen>/gen_client_cert.py -p <path-to-databus>/config-c
 ```bash
 python <path-to-mqtt-cryptogen>/extract_pkcs12_certs.py -p <path-to-databus>/config-certs/extract_pkcs12_req.json
 ```
+
+Then copy certificates to each components' volume:
+
+```bash
+cp -r <component>/* /var/opt/docker/alpr-system/<component>/certs/
+```
+
 3. Setup (if desired) `acl.conf`.
 
+Then copy file to volume:
+```bash
+cp acl.conf /var/opt/docker/alpr-system/databus
+```
 
 ## License <a id='license'></a>
 

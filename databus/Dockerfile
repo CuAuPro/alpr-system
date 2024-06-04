@@ -12,10 +12,6 @@ RUN apt-get update && apt-get install -y \
 	mosquitto \ 
 	mosquitto-clients
 
-# Copying mosquitto configuration
-COPY mosquitto.conf /etc/mosquitto/mosquitto.conf
-COPY certs/* /etc/mosquitto/certs/
-COPY acl.conf /etc/mosquitto/acl.conf
 # Start the MQTTS daemon during container startup
 RUN mkdir /etc/service/mosquitto
 COPY mosquitto.sh /etc/service/mosquitto/run
