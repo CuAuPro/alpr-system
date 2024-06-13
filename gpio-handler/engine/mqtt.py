@@ -145,12 +145,12 @@ class MQTTEngine:
     def __init__(self, config):
         self.broker = config["broker"]
         self.port = config["port"]
-        self.client_id = config["client_id"]
-        self.tls_ca_cert = config["tls_ca_cert"]
-        self.tls_certfile = config["tls_certfile"]
-        self.tls_keyfile = config["tls_keyfile"]
-        self.client = mqtt.Client(client_id=self.client_id,
-                                  callback_api_version=mqtt.CallbackAPIVersion.VERSION1)
+        self.client_id = config["clientId"]
+        self.tls_ca_cert = config["tls"]["ca"]
+        self.tls_certfile = config["tls"]["cert"]
+        self.tls_keyfile = config["tls"]["key"]
+        
+        self.client = mqtt.Client(client_id=self.client_id)
         
                 # Set TLS configuration if provided
         if self.tls_ca_cert and self.tls_certfile and self.tls_keyfile:

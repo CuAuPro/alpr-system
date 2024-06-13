@@ -5,47 +5,79 @@ import logging
 
 from logger.logger import init_logger
 from engine.mqtt import MQTTEngine
-
-# Pin Definitions
-OUTPUT_PIN = 18  # BCM pin 18, BOARD pin 12
+from engine.utils import load_config
 
 def handle_mqtt(client, userdata, message):
     try:
         topic = message.topic
         data = json.loads(message.payload)
-        logging.debug(data)
+        logging.debug(f"Received MQTT message: {data}")
 
         if topic == "alpr/ramp/cmd":
             if data["value"] == 1:
-                GPIO.output(OUTPUT_PIN, GPIO.HIGH)
+                GPIO.output(OPEN_PIN, GPIO.HIGH if not config['gate']['open']['inverse'] else GPIO.LOW)
             elif data["value"] == 0:
-                GPIO.output(OUTPUT_PIN, GPIO.LOW)
+                GPIO.output(OPEN_PIN, GPIO.LOW if not config['gate']['open']['inverse'] else GPIO.HIGH)
             else:
-                logging.error("Invalid command for ramp!")
+                logging.error("Invalid command value for ramp!")
         else:
-            logging.debug("Unknown mqtt topic: {}".format(topic))
+            logging.debug(f"Unknown MQTT topic: {topic}")
     except Exception as e:
-        logging.error("Exception at handle_mqtt: {}".format(e))
+        logging.error(f"Exception at handle_mqtt: {e}")
         
-if __name__ == "__main__":
-    init_logger(logging_level=logging.INFO, print_to_stdout=False, log_in_file=True)
 
-    config = {  'broker': 'databus',
-                'port': 8883,
-                'client_id': 'gpio-handler',
-                'tls_ca_cert': './certs/ca.crt',
-                'tls_certfile': './certs/databus-gpio-handler.crt',
-                'tls_keyfile': './certs/databus-gpio-handler.key',
-             }
-    mqtt_engine = MQTTEngine(config)
-    mqtt_engine.client.tls_insecure_set(True)
+
+if __name__ == "__main__":
+    # Load configuration
+    config = load_config('config.yaml')
+
+    # Map logging level string to numerical constant
+    log_level = {
+        "debug": logging.DEBUG,
+        "info": logging.INFO,
+        "warn": logging.WARNING,
+        "warning": logging.WARNING,
+        "error": logging.ERROR,
+        "fatal": logging.FATAL,
+        "critical": logging.CRITICAL
+    }.get(config['logging']['level'].lower(), logging.INFO)  # Default to INFO if level is not recognized
+    # Initialize logger
+    init_logger(logging_level=log_level, 
+                print_to_stdout=config['logging']['print_to_stdout'], 
+                log_in_file=config['logging']['log_in_file'])
+    
+    # MQTT configuration
+    mqtt_config = {
+        'broker': config['mqtt']['broker'],
+        'port': config['mqtt']['port'],
+        'clientId': config['mqtt']['clientId'],
+        'auth': {
+            'username': config['mqtt']['auth']['username'],
+            'password': config['mqtt']['auth']['password']
+        },
+        'tls': {
+            'ca': config['mqtt']['tls']['ca'],
+            'cert': config['mqtt']['tls']['cert'],
+            'key': config['mqtt']['tls']['key']
+        }
+    }
+    
+    # Initialize GPIO for opening gate
+    OPEN_PIN = config['gate']['open']['pin']
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(OPEN_PIN, GPIO.OUT, initial=GPIO.HIGH if config['gate']['open']['inverse'] else GPIO.LOW)
+    
+    # Initialize GPIO for closing gate if defined in config
+    if 'close' in config['gate'] and 'pin' in config['gate']['close']:
+        CLOSE_PIN = config['gate']['close']['pin']
+        GPIO.setup(CLOSE_PIN, GPIO.OUT, initial=GPIO.LOW if config['gate']['close']['inverse'] else GPIO.HIGH)
+    
+    # Initialize MQTT Engine
+    mqtt_engine = MQTTEngine(mqtt_config)
+    mqtt_engine.client.tls_insecure_set(True)  # Consider removing this in production for secure connections
     mqtt_engine.connect()
     mqtt_engine.subscribe("alpr/ramp/cmd")
     mqtt_engine.client.on_message = handle_mqtt
-    # Pin Setup:
-    GPIO.setmode(GPIO.BCM)  # BCM pin-numbering scheme from Raspberry Pi
-    # set pin as an output pin with optional initial state of HIGH
-    GPIO.setup(OUTPUT_PIN, GPIO.OUT, initial=GPIO.LOW)
     try:
         mqtt_engine.client.loop_forever()
     except KeyboardInterrupt:

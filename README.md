@@ -86,10 +86,10 @@ full-featured ALPR system.
 
 4. Setup MQTT (for additional requirements)
 
-  ```bash
-  cd ../databus
-  # Follow instructions in mqtt/README.md
-  ```
+    ```bash
+    cd ../databus
+    # Follow instructions in mqtt/README.md
+    ```
 
 5. Setup Python AI scripts (for additional requirements):
 
