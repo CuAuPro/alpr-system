@@ -143,12 +143,13 @@ class MQTTEngine:
     """
 
     def __init__(self, config):
-        self.broker = config["broker"]
-        self.port = config["port"]
-        self.client_id = config["client_id"]
-        self.tls_ca_cert = config["tls_ca_cert"]
-        self.tls_certfile = config["tls_certfile"]
-        self.tls_keyfile = config["tls_keyfile"]
+        self.broker = config["mqtt"]["broker"]
+        self.port = config["mqtt"]["port"]
+        self.client_id = config["mqtt"]["clientId"]
+        self.tls_ca_cert = config["mqtt"]["tls"]["ca"]
+        self.tls_certfile = config["mqtt"]["tls"]["cert"]
+        self.tls_keyfile = config["mqtt"]["tls"]["key"]
+        
         self.client = mqtt.Client(client_id=self.client_id,
                                   callback_api_version=mqtt.CallbackAPIVersion.VERSION1)
         
