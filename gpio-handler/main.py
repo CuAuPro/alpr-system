@@ -29,10 +29,20 @@ def handle_mqtt(client, userdata, message):
 
 if __name__ == "__main__":
     # Load configuration
-    config = load_config('gpio_config.yaml')
+    config = load_config('config.yaml')
 
+    # Map logging level string to numerical constant
+    log_level = {
+        "debug": logging.DEBUG,
+        "info": logging.INFO,
+        "warn": logging.WARNING,
+        "warning": logging.WARNING,
+        "error": logging.ERROR,
+        "fatal": logging.FATAL,
+        "critical": logging.CRITICAL
+    }.get(config['logging']['level'].lower(), logging.INFO)  # Default to INFO if level is not recognized
     # Initialize logger
-    init_logger(logging_level=config['logging']['level'], 
+    init_logger(logging_level=log_level, 
                 print_to_stdout=config['logging']['print_to_stdout'], 
                 log_in_file=config['logging']['log_in_file'])
     
@@ -40,7 +50,7 @@ if __name__ == "__main__":
     mqtt_config = {
         'broker': config['mqtt']['broker'],
         'port': config['mqtt']['port'],
-        'client_id': config['mqtt']['clientId'],
+        'clientId': config['mqtt']['clientId'],
         'auth': {
             'username': config['mqtt']['auth']['username'],
             'password': config['mqtt']['auth']['password']
@@ -55,7 +65,7 @@ if __name__ == "__main__":
     # Initialize GPIO for opening gate
     OPEN_PIN = config['gate']['open']['pin']
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(OPEN_PIN, GPIO.OUT, initial=GPIO.LOW if config['gate']['open']['inverse'] else GPIO.HIGH)
+    GPIO.setup(OPEN_PIN, GPIO.OUT, initial=GPIO.HIGH if config['gate']['open']['inverse'] else GPIO.LOW)
     
     # Initialize GPIO for closing gate if defined in config
     if 'close' in config['gate'] and 'pin' in config['gate']['close']:

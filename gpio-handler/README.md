@@ -27,28 +27,29 @@ messages. It uses SSL/TLS certificates to secure the communication with the MQTT
 ### Configuration
 
 Configuration of the GPIO Handler is done using a YAML file or environment variables. The configuration file must be
-placed in the same directory as the executable and named `config.yaml`. The following is an example configuration file:
+placed in the same directory as the executable and named `config.yaml` (place it inside `/var/opt/docker/alpr-system/gpio-handler/`:). The following is an example configuration file:
 
 ```yaml
 # MQTT client configuration
 mqtt:
-  broker: "tcp://localhost:1883"
+  broker: "databus"
+  port: 8883
   clientId: "gpio-handler" # Required. Must be unique on the MQTT broker
   auth: # Optional. Leave empty if no authentication is required
     username: ""
     password: ""
   tls: # Optional. Leave empty if no TLS is required
-    enabled: false
-    ca: ""
-    cert: ""
-    key: ""
+    enabled: true
+    ca: "./certs/ca.crt"
+    cert: "./certs/databus-gpio-handler.crt"
+    key: "./certs/databus-gpio-handler.key"
 
 # GPIO configuration for gate control
 gate:
   # Closing settings
   close:
     inverse: true # Optional. Invert the output signal
-    pin: 17 # Required. GPIO pin number
+    pin: 17 # Optional. GPIO pin number
   # Opening settings
   open:
     inverse: false # Optional. Invert the output signal
@@ -57,8 +58,13 @@ gate:
 # Logging configuration (optional)
 logging:
   level: "info" # Log level: "debug", "info", "warn", "error", "fatal"
+  print_to_stdout: False
+  log_in_file: True
 ```
-
+You can copy sample file:
+```bash
+cp config.yaml /var/opt/docker/alpr-system/gpio-handler/
+```
 ### Generating Certificates <a id='generating-certificates'></a>
 
 To secure the MQTT communication, you need to generate SSL/TLS certificates. You can use the `mqtt-cryptogen` tool

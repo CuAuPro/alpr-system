@@ -14,11 +14,13 @@ mqtt:
 
 # AI inference configuration
 engine:
-  network: "./engine/models/model-detect.onnx"
+  network: "ssd-mobilenet-v2"
+  model: "./engine/models/model-detect.onnx"
   class_labels: "./engine/models/labels-detect.txt"
   input_blob: "input_0"
   output_cvg: "scores"
   output_bbox: "boxes"
+  overlay: box,labels,conf
   width: 640
   height: 480
   threshold: 0.5
@@ -28,8 +30,8 @@ engine:
 # Camera configuration
 camera:
   - id: 1
-    input_stream: "rtsp://@:8554/stream1" # URL of the first camera stream
-    output_stream: "rtsp://@:8554/output1" # URL of the first camera output stream
+    input_stream: "rtsp://192.168.0.15:554/user=admin&password=&channel=1&stream=0.sdp?" # URL of the first camera stream
+    output_stream: "rtsp://@:8554/stream" # URL of the first camera output stream
 
 # Logging configuration (optional)
 logging:

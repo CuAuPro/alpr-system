@@ -23,7 +23,18 @@ except:
 	logging.error("INVALID CONFIG FILE.")
 	sys.exit(0)
 
-init_logger(logging_level=config['logging']['level'], 
+# Map logging level string to numerical constant
+log_level = {
+    "debug": logging.DEBUG,
+    "info": logging.INFO,
+    "warn": logging.WARNING,
+    "warning": logging.WARNING,
+    "error": logging.ERROR,
+    "fatal": logging.FATAL,
+    "critical": logging.CRITICAL
+}.get(config['logging']['level'].lower(), logging.INFO)  # Default to INFO if level is not recognized
+# Initialize logger
+init_logger(logging_level=log_level, 
             print_to_stdout=config['logging']['print_to_stdout'], 
             log_in_file=config['logging']['log_in_file'])
 
@@ -31,7 +42,7 @@ init_logger(logging_level=config['logging']['level'],
 mqtt_config = {
     'broker': config['mqtt']['broker'],
     'port': config['mqtt']['port'],
-    'client_id': config['mqtt']['clientId'],
+    'clientId': config['mqtt']['clientId'],
     'auth': {
         'username': config['mqtt']['auth']['username'],
         'password': config['mqtt']['auth']['password']
@@ -59,24 +70,29 @@ logging.debug("[OCR] Initializing label converter...")
 ocr.init_label_converter()
 logging.debug("[OCR] Initializing label converter - DONE.")
 logging.debug("[OCR] Initializing weights...")
-ocr.load(config['ocr_model'])
+ocr.load(config['engine']['ocr_model'])
 logging.debug("[OCR] Initializing weights - DONE.")
 
-        
+argv = [
+        "--model=" + config['engine']['model'],
+        "--class_labels=" + config['engine']['class_labels'],
+        "--input_blob=" + config['engine']['input_blob'],
+        "--output_cvg=" + config['engine']['output_cvg'],
+        "--output_bbox=" + config['engine']['output_bbox'],
+        "--width=" + str(config['engine']['width']),
+        "--height=" + str(config['engine']['height'])
+    ]
 # Load the object detection network
-net = jetson.inference.detectNet(config['network'], config['threshold'], [
-    "--class_labels=" + config['class_labels'],
-    "--input_blob=" + config['input_blob'],
-    "--output_cvg=" + config['output_cvg'],
-    "--output_bbox=" + config['output_bbox'],
-    "--width=" + str(config['width']),
-    "--height=" + str(config['height'])
-])
+net = jetson.inference.detectNet(
+    config['engine']['network'],
+    argv,
+    config['engine']['threshold']
+    )
 
 # Create video sources & outputs
-is_headless = ["--headless"] if config['headless'] else []
-input = jetson.utils.videoSource(config['camera'][0]['input_stream'], argv=is_headless)
-output = jetson.utils.videoOutput(config['camera'][0]['output_stream'], argv=is_headless)
+is_headless = ["--headless"] if config['engine']['headless'] else []
+input = jetson.utils.videoSource(config['camera'][0]['input_stream'], argv)
+output = jetson.utils.videoOutput(config['camera'][0]['output_stream'], argv=argv+is_headless)
 
 # process frames until the user exits
 while True:
@@ -84,7 +100,7 @@ while True:
     img = input.Capture()
     raw_img = jetson.utils.cudaToNumpy(img)
     # detect objects in the image (with overlay)
-    detections = net.Detect(img, overlay=config.get('overlay', "box,labels,conf"))
+    detections = net.Detect(img, overlay=config['engine'].get('overlay', "box,labels,conf"))
 
     # print the detections
     logging.debug("detected {:d} objects in image".format(len(detections)))
@@ -119,7 +135,7 @@ while True:
     output.Render(img)
 
     # update the title bar
-    output.SetStatus("{:s} | Network {:.0f} FPS".format(config['network'], net.GetNetworkFPS()))
+    output.SetStatus("{:s} | Network {:.0f} FPS".format(config['engine']['network'], net.GetNetworkFPS()))
 
     # print out performance info
     #net.PrintProfilerTimes()
