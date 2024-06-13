@@ -1,0 +1,27 @@
+# MQTT client configuration
+mqtt:
+  broker: "tcp://localhost:1883"
+  clientId: "gpio-handler" # Required. Must be unique on the MQTT broker
+  auth: # Optional. Leave empty if no authentication is required
+    username: ""
+    password: ""
+  tls: # Optional. Leave empty if no TLS is required
+    enabled: false
+    ca: ""
+    cert: ""
+    key: ""
+
+# GPIO configuration for gate control
+gate:
+  # Closing settings
+  close:
+    inverse: true # Optional. Invert the output signal
+    pin: 17 # Required. GPIO pin number
+  # Opening settings
+  open:
+    inverse: false # Optional. Invert the output signal
+    pin: 18 # Required. GPIO pin number
+
+# Logging configuration (optional)
+logging:
+  level: "info" # Log level: "debug", "info", "warn", "error", "fatal"

@@ -1,0 +1,20 @@
+# MQTT client configuration
+mqtt:
+  broker: "tcp://localhost:1883"
+  clientId: "ai-engine" # Required. Must be unique on the MQTT broker
+  auth: # Optional. Leave empty if no authentication is required
+    username: ""
+    password: ""
+  tls: # Optional. Leave empty if no TLS is required
+    enabled: false
+    ca: ""
+    cert: ""
+    key: ""
+
+# Camera configuration
+camera:
+  stream: "rtsp://@:8554/stream" # Required. URL of the camera stream
+
+# Logging configuration (optional)
+logging:
+  level: "info" # Log level: "debug", "info", "warn", "error", "fatal"
