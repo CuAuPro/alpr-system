@@ -124,7 +124,7 @@ while True:
                 "error": "Max retries exceeded",
                 "message": f"Error capturing and processing image: {e}"
             }
-            mqtt_engine.publish("alpr/ai-engine/error", mqtt_message)
+            mqtt_engine.publish(mqtt_message, "alpr/ai-engine/error")
             break  # Exit the loop after exceeding max retries
         time.sleep(1)  # Wait for a short period before trying again
         continue
