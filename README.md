@@ -150,6 +150,34 @@ JWT_SECRET=your_jwt_secret
 Dockerfiles are provided for both the backend and frontend components. You can use Docker Compose to easily build and
 run the entire system in containers.
 
+Docker's `default-runtime` to `nvidia`, so that the NVCC compiler and GPU are available during `docker build` operations.  Add `"default-runtime": "nvidia"` to your `/etc/docker/daemon.json` configuration file before attempting to build the containers:
+
+``` json
+{
+    "runtimes": {
+        "nvidia": {
+            "path": "nvidia-container-runtime",
+            "runtimeArgs": []
+        }
+    },
+
+    "default-runtime": "nvidia"
+}
+```
+
+Then restart the Docker service, or reboot your system before proceeding:
+
+```bash
+$ sudo systemctl restart docker
+```
+
+You can then confirm the changes by looking under `docker info`
+
+```bash
+$ sudo docker info | grep 'Default Runtime'
+Default Runtime: nvidia
+```
+
 You also need to create persistend database file. To create a directory in and set up a volume for the backend alpr.db,
 follow these steps:
 
