@@ -85,8 +85,8 @@ argv = [
         "--input_blob=" + config['engine']['input_blob'],
         "--output_cvg=" + config['engine']['output_cvg'],
         "--output_bbox=" + config['engine']['output_bbox'],
-        "--input-width=" + str(config['engine']['width']),
-        "--input-height=" + str(config['engine']['height'])
+        "--width=" + str(config['engine']['width']),
+        "--height=" + str(config['engine']['height'])
     ]
 # Load the object detection network
 net = jetson.inference.detectNet(
