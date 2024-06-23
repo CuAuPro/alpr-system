@@ -15,6 +15,7 @@ mqtt:
 # GPIO configuration for gate control
 gate:
   # Closing settings
+  ignore_duration: 20
   close:
     inverse: true # Optional. Invert the output signal
     pin: 17 # Optional. GPIO pin number
@@ -22,6 +23,7 @@ gate:
   open:
     inverse: false # Optional. Invert the output signal
     pin: 18 # Required. GPIO pin number
+    duration: 5 # Duration in seconds to trigger ramp opening
 
 # Logging configuration (optional)
 logging:

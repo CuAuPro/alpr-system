@@ -8,7 +8,7 @@ import sys
 from engine.utils import load_config
 import torch
 import pycuda.driver as cuda
-
+import time
 import logging
 import cv2
 from engine.pipes.number_plate_text_readers.base.ocr_trt import OcrTrt
@@ -37,6 +37,12 @@ log_level = {
 init_logger(logging_level=log_level, 
             print_to_stdout=config['logging']['print_to_stdout'], 
             log_in_file=config['logging']['log_in_file'])
+
+# Extract camera configuration
+camera_config = config['camera'][0]
+input_image_width = camera_config['image_size']['width']
+input_image_height = camera_config['image_size']['height']
+camera_regions = camera_config['regions']
 
 # MQTT configuration
 mqtt_config = {
@@ -79,8 +85,8 @@ argv = [
         "--input_blob=" + config['engine']['input_blob'],
         "--output_cvg=" + config['engine']['output_cvg'],
         "--output_bbox=" + config['engine']['output_bbox'],
-        "--width=" + str(config['engine']['width']),
-        "--height=" + str(config['engine']['height'])
+        "--input-width=" + str(config['engine']['width']),
+        "--input-height=" + str(config['engine']['height'])
     ]
 # Load the object detection network
 net = jetson.inference.detectNet(
@@ -91,57 +97,101 @@ net = jetson.inference.detectNet(
 
 # Create video sources & outputs
 is_headless = ["--headless"] if config['engine']['headless'] else []
-input = jetson.utils.videoSource(config['camera'][0]['input_stream'], argv)
-output = jetson.utils.videoOutput(config['camera'][0]['output_stream'], argv=argv+is_headless)
+input_stream = jetson.utils.videoSource(config['camera'][0]['input_stream'], argv)
+output_stream = jetson.utils.videoOutput(config['camera'][0]['output_stream'], argv=argv+is_headless)
+#capture = cv2.VideoCapture(camera_config['input_stream'])
+
+
+# Max retries configuration
+max_retries = config['engine'].get('max_retries', 5)  # Default to 5 retries if not specified in the config
+
+# Initialize retry counter
+retry_counter = 0
 
 # process frames until the user exits
 while True:
-    # capture the next image
-    img = input.Capture()
-    raw_img = jetson.utils.cudaToNumpy(img)
-    # detect objects in the image (with overlay)
-    detections = net.Detect(img, overlay=config['engine'].get('overlay', "box,labels,conf"))
+    try:
+        # capture the next image
+        img = input_stream.Capture()
+        raw_img = jetson.utils.cudaToNumpy(img)
+        raw_img = cv2.resize(raw_img, (input_image_width, input_image_height))
+        retry_counter = 0  # Reset counter on success
+    except Exception as e:
+        logging.error(f"Error capturing and processing image: {e}")
+        retry_counter += 1
+        if retry_counter > max_retries:
+            mqtt_message = {
+                "error": "Max retries exceeded",
+                "message": f"Error capturing and processing image: {e}"
+            }
+            mqtt_engine.publish("alpr/ai-engine/error", mqtt_message)
+            break  # Exit the loop after exceeding max retries
+        time.sleep(1)  # Wait for a short period before trying again
+        continue
+    # Extract regions based on the configuration
+    for region in camera_regions:
+        try:
+            name = region['name']
+            coords = region['coordinates']
+            
+            # Extract the top-left and bottom-right coordinates
+            x1, y1 = coords[0]['x'], coords[0]['y']
+            x2, y2 = coords[2]['x'], coords[2]['y']
+            
+            # Crop the region from the resized image
+            region_img = raw_img[y1:y2, x1:x2, :]
+            
+            img = jetson.utils.cudaFromNumpy(region_img)
+            # detect objects in the image (with overlay)
+            detections = net.Detect(img, overlay=config['engine'].get('overlay', "box,labels,conf"))
 
-    # print the detections
-    logging.debug("detected {:d} objects in image".format(len(detections)))
+            # print the detections
+            logging.debug("[DET] Detected {:d} objects in region {}".format(len(detections), name))
 
-    for i, detection in enumerate(detections):
-        x_min = int(detection.Left)
-        x_max = int(detection.Right)
-        y_max = int(detection.Bottom)
-        y_min = int(detection.Top)
+            for i, detection in enumerate(detections):
+                try:
+                    x_min = int(detection.Left)
+                    x_max = int(detection.Right)
+                    y_max = int(detection.Bottom)
+                    y_min = int(detection.Top)
 
-        cropped_img = raw_img[y_min:y_max, x_min:x_max, :]
-        cropped_img = cv2.cvtColor(cropped_img, cv2.COLOR_BGR2RGB)
-        ctx.push()
-        #logging.debug("[OCR] Preprocessing image.")
-        xs = ocr.preprocess([cropped_img])
-        #logging.debug("[OCR] Image preprocessed.")
-        #logging.debug("[OCR] Predicting.")
-        license_plate_text = ocr.predict(xs, stream)[0]
-        ctx.pop()
-        logging.debug("[OCR] Predicted: {}".format(license_plate_text))
-        
-        data = {}
-        data["licensePlate"] = license_plate_text
-        mqtt_engine.publish(data, "alpr/ramp/req")
-        # Draw bounding box
-        cv2.rectangle(raw_img, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
-        cv2.putText(raw_img, license_plate_text, (x_min, y_min - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-        #logging.debug("========================================")
-    # render the image
-    
-    img = jetson.utils.cudaFromNumpy(raw_img)
-    output.Render(img)
+                    cropped_img = region_img[y_min:y_max, x_min:x_max, :]
+                    cropped_img = cv2.resize(cropped_img, (300,100))
+                    cropped_img = cv2.cvtColor(cropped_img, cv2.COLOR_BGR2RGB)
+                    ctx.push()
+                    #logging.debug("[OCR] Preprocessing image.")
+                    xs = ocr.preprocess([cropped_img])
+                    #logging.debug("[OCR] Image preprocessed.")
+                    #logging.debug("[OCR] Predicting.")
+                    license_plate_text = ocr.predict(xs, stream)[0]
+                    ctx.pop()
+                    logging.debug("[OCR] Predicted: {}".format(license_plate_text))
+                    
+                    data = {}
+                    data["licensePlate"] = license_plate_text
+                    mqtt_engine.publish(data, "alpr/ramp/req")
+                    # Draw the detection and text on the full-sized raw_img
+                    cv2.rectangle(raw_img, (x_min + x1, y_min + y1), (x_max + x1, y_max + y1), (0, 255, 0), 2)
+                    cv2.putText(raw_img, license_plate_text, (x_min + x1, y_min + y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+                    #logging.debug("========================================")
+                except Exception as e:
+                    logging.error(f"Error processing detection: {e}")
+        except Exception as e:
+            logging.error(f"Error processing region {region['name']}: {e}")
+    try:
+        # render the image
+        img = jetson.utils.cudaFromNumpy(raw_img)
+        output_stream.Render(img)
 
-    # update the title bar
-    output.SetStatus("{:s} | Network {:.0f} FPS".format(config['engine']['network'], net.GetNetworkFPS()))
+        # update the title bar
+        output_stream.SetStatus("{:s} | Network {:.0f} FPS".format(config['engine']['network'], net.GetNetworkFPS()))
 
-    # print out performance info
-    #net.PrintProfilerTimes()
-    logging.debug("Network {:.0f} FPS".format(net.GetNetworkFPS()))
-    logging.debug("========================================")
+        # print out performance info
+        logging.debug("Network {:.0f} FPS".format(net.GetNetworkFPS()))
+        logging.debug("========================================")
+    except Exception as e:
+        logging.error(f"Error rendering image: {e}")
     # exit on input/output EOS
-    if not input.IsStreaming() or not output.IsStreaming():
+    if not input_stream.IsStreaming() or not output_stream.IsStreaming():
        break
 

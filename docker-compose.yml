@@ -105,8 +105,6 @@ services:
       - alpr-network  # Connect to the alpr-network
     ports:
       - "8554:8554"  # Example RTSP server port
-    devices:
-      - /dev/video0
     volumes:
       # Bind volume with certificates at runtime
       - /var/opt/docker/alpr-system/ai-engine/certs:/app/certs
