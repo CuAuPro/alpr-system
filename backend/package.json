@@ -35,7 +35,7 @@
     "multer": "^1.4.5-lts.1",
     "sqlite3": "^5.1.7",
     "swagger-ui-express": "^5.0.0",
-    "uuid": "^9.0.1",
+    "uuid": "^10.0.0",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
@@ -49,7 +49,7 @@
     "@types/multer": "^1.4.7",
     "@types/node": "^20.14.0",
     "@types/swagger-ui-express": "^4.1.6",
-    "@types/uuid": "^9.0.8",
+    "@types/uuid": "^10.0.0",
     "@types/yamljs": "^0.2.34",
     "@typescript-eslint/eslint-plugin": "^6.6.0",
     "@typescript-eslint/parser": "^6.0.0",
