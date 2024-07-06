@@ -145,12 +145,12 @@ PORT=443
 JWT_SECRET=your_jwt_secret
 ```
 
-## Docker <a id='docker'></a>
+## Docker Deployment <a id='docker'></a>
 
 Dockerfiles are provided for both the backend and frontend components. You can use Docker Compose to easily build and
 run the entire system in containers.
 
-Docker's `default-runtime` to `nvidia`, so that the NVCC compiler and GPU are available during `docker build` operations.  Add `"default-runtime": "nvidia"` to your `/etc/docker/daemon.json` configuration file before attempting to build the containers:
+Docker's `default-runtime` to `nvidia`, so that the NVCC compiler and GPU are available during `docker build` operations.  Add `"default-runtime": "nvidia"` to your `/etc/docker/daemon.json` configuration file before attempting to build the containers (if file doesn't exist, create it):
 
 ``` json
 {
@@ -181,6 +181,8 @@ Default Runtime: nvidia
 You also need to create persistend database file. To create a directory in and set up a volume for the backend alpr.db,
 follow these steps:
 
+### Persistent Database File <a id='pesistent-db'></a>
+You need to create a persistent database file. To set up a volume for the backend alpr.db, follow these steps:
 1. Create Directory: Open a terminal and run the following command to create a directory named `alpr-system`
    in `/var/opt/docker/database`:
 
@@ -190,13 +192,27 @@ follow these steps:
 
 2. Copy initialized `alpr.db` to `/var/opt/docker/alpr-system/database`.
 
-3. Set Up Volume: After creating the directory, you can specify a volume for the backend alpr.db in your Docker Compose
-   file. Add the following volume configuration under the backend service in your `docker-compose.yml` file:
-
-    ```yaml
-    volumes:
-      - /var/opt/docker/alpr-system/database:/app/backend/database
+    ```bash
+    sudo cp backend/database/alpr.db /var/opt/docker/alpr-system/database
     ```
+
+### Additional Configuration Files <a id='config-files'></a>
+To ensure that volume binds work correctly for additional configuration files, follow these steps:
+1. Create Necessary Directories:
+
+    ```bash
+    sudo mkdir -p /var/opt/docker/alpr-system/gpio-handler
+    sudo mkdir -p /var/opt/docker/alpr-system/ai-engine
+    ```
+
+2. Copy Configuration Files:
+
+    ```bash
+    sudo cp gpio-handler/config.yaml /var/opt/docker/alpr-system/gpio-handler/config.yaml
+    sudo cp ai-engine/config.yaml /var/opt/docker/alpr-system/ai-engine/config.yaml
+    ```
+
+### Starting the Application<a id='starting-app'></a>
 
 To start the application using Docker Compose:
 

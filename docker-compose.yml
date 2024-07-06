@@ -59,6 +59,7 @@ services:
     volumes:
       # Bind volume with certificates at runtime
       - /var/opt/docker/alpr-system/gpio-handler/certs:/app/certs
+      - /var/opt/docker/alpr-system/gpio-handler/config.yaml:/app/config.yaml
     networks:
       - alpr-network  # Connect to the alpr-network
     runtime: nvidia
@@ -108,6 +109,7 @@ services:
     volumes:
       # Bind volume with certificates at runtime
       - /var/opt/docker/alpr-system/ai-engine/certs:/app/certs
+      - /var/opt/docker/alpr-system/ai-engine/config.yaml:/app/config.yaml
     deploy:
       resources:
         limits:
