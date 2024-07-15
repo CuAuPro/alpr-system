@@ -86,10 +86,10 @@ full-featured ALPR system.
 
 4. Setup MQTT (for additional requirements)
 
-  ```bash
-  cd ../databus
-  # Follow instructions in mqtt/README.md
-  ```
+    ```bash
+    cd ../databus
+    # Follow instructions in mqtt/README.md
+    ```
 
 5. Setup Python AI scripts (for additional requirements):
 
@@ -145,14 +145,61 @@ PORT=443
 JWT_SECRET=your_jwt_secret
 ```
 
-## Docker <a id='docker'></a>
+## Docker Deployment <a id='docker'></a>
 
 Dockerfiles are provided for both the backend and frontend components. You can use Docker Compose to easily build and
 run the entire system in containers.
 
+First, please ensure that `docker-compose` is installed. If it is not yet, execute commands:
+
+```bash
+sudo apt-get update
+sudo apt-get install libhdf5-dev
+sudo apt-get install libssl-dev
+sudo python3 -m pip install --upgrade pip setuptools
+
+sudo python3 -m pip install docker-compose
+```
+
+Docker's `default-runtime` to `nvidia`, so that the NVCC compiler and GPU are available during `docker build` operations.  Add `"default-runtime": "nvidia"` to your `/etc/docker/daemon.json` configuration file before attempting to build the containers (if file doesn't exist, create it):
+
+``` json
+{
+    "runtimes": {
+        "nvidia": {
+            "path": "nvidia-container-runtime",
+            "runtimeArgs": []
+        }
+    },
+
+    "default-runtime": "nvidia"
+}
+```
+
+If necessary, install `nvidia-container-runtime`.
+
+```bash
+sudo apt-get install nvidia-container-runtime
+```
+
+Then restart the Docker service, or reboot your system before proceeding:
+
+```bash
+$ sudo systemctl restart docker
+```
+
+You can then confirm the changes by looking under `docker info`
+
+```bash
+$ sudo docker info | grep 'Default Runtime'
+Default Runtime: nvidia
+```
+
 You also need to create persistend database file. To create a directory in and set up a volume for the backend alpr.db,
 follow these steps:
 
+### Persistent Database File <a id='pesistent-db'></a>
+You need to create a persistent database file. To set up a volume for the backend alpr.db, follow these steps:
 1. Create Directory: Open a terminal and run the following command to create a directory named `alpr-system`
    in `/var/opt/docker/database`:
 
@@ -162,18 +209,81 @@ follow these steps:
 
 2. Copy initialized `alpr.db` to `/var/opt/docker/alpr-system/database`.
 
-3. Set Up Volume: After creating the directory, you can specify a volume for the backend alpr.db in your Docker Compose
-   file. Add the following volume configuration under the backend service in your `docker-compose.yml` file:
-
-    ```yaml
-    volumes:
-      - /var/opt/docker/alpr-system/database:/app/backend/database
+    ```bash
+    sudo cp backend/database/alpr.db /var/opt/docker/alpr-system/database
     ```
+
+### Additional Configuration Files <a id='config-files'></a>
+To ensure that volume binds work correctly for additional configuration files, follow these steps:
+1. Create Necessary Directories:
+
+    ```bash
+    sudo mkdir -p /var/opt/docker/alpr-system/gpio-handler
+    sudo mkdir -p /var/opt/docker/alpr-system/ai-engine
+    ```
+
+2. Copy Configuration Files:
+
+    ```bash
+    sudo cp gpio-handler/config.yaml /var/opt/docker/alpr-system/gpio-handler/config.yaml
+    sudo cp ai-engine/config.yaml /var/opt/docker/alpr-system/ai-engine/config.yaml
+    ```
+### Certificates <a id='certificates'></a>
+To ensure that volume binds work correctly for additional configuration files, follow these steps:
+1. Create Necessary Directories:
+
+    ```bash
+    sudo mkdir -p /var/opt/docker/alpr-system/backend
+    sudo mkdir -p /var/opt/docker/alpr-system/frontend
+    ```
+
+#### HTTPS <a id='certificates-https'></a>
+Please refer to [`backend/README`](backend/README.md). You need to do:
+
+Generate self-signed certificates for development purposes. For production, use certificates from a trusted Certificate Authority (CA).
+
+Use OpenSSL to generate a self-signed certificate:
+
+```bash
+openssl req -nodes -new -x509 -keyout key.pem -out cert.pem -days 3650
+```
+
+Then copy certificates to docker volume folder:
+
+```bash
+sudo mkdir -p /var/opt/docker/alpr-system/backend/certs/https/ && sudo mv cert.pem /var/opt/docker/alpr-system/backend/certs/https/
+sudo mv key.pem /var/opt/docker/alpr-system/backend/certs/https/
+
+sudo mkdir -p /var/opt/docker/alpr-system/frontend/certs/https/ && sudo cp /var/opt/docker/alpr-system/backend/certs/https/cert.pem /var/opt/docker/alpr-system/frontend/certs/https/
+sudo cp /var/opt/docker/alpr-system/backend/certs/https/key.pem /var/opt/docker/alpr-system/frontend/certs/https/
+```
+
+
+#### Databus <a id='certificates-https'></a>
+For databus communication, refer to specific documentation [`databus/README`](databus/README.md) for certificate generation and configuration. In any case, you need to create directories:
+
+```bash
+sudo mkdir -p /var/opt/docker/alpr-system/backend/certs/databus/
+sudo mkdir -p /var/opt/docker/alpr-system/frontend/certs/databus/
+
+sudo mkdir -p /var/opt/docker/alpr-system/databus/certs/
+sudo mkdir -p /var/opt/docker/alpr-system/ai-engine/certs/
+sudo mkdir -p /var/opt/docker/alpr-system/gpio-handler/certs/
+```
+
+### Starting the Application <a id='starting-app'></a>
 
 To start the application using Docker Compose:
 
 ```bash
-docker-compose up --build
+docker-compose up -d
+```
+
+### Building and Running the Application Locally <a id='starting-app-lcoally'></a>
+
+To build the Docker images and run the application locally, use the provided `docker-compose-build.yml` file.
+```bash
+docker-compose -f docker-compose-build.yml up --build
 ```
 
 ## License <a id='license'></a>

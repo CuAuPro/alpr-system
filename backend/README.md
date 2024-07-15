@@ -44,7 +44,7 @@ Generate self-signed certificates for development purposes. For production, use 
 Use OpenSSL to generate a self-signed certificate:
 
 ```bash
-mkdir certs
+mkdir -p certs/https & cd certs/https
 openssl req -nodes -new -x509 -keyout key.pem -out cert.pem -days 3650
 ```
 
@@ -137,13 +137,6 @@ Run the provided initialization script:
 
 Copy database file to `database/`.
 
-### API Endpoints
-
-- `POST /auth/signin`: Sign in a user
-- `POST /auth/signup`: Sign up a new user
-- `POST /auth/reset-password`: Reset a user's password
-- `GET /api/users`: Get a list of users
-- `GET /api/products`: Get a list of products
 
 ## Environment Variables
 

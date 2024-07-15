@@ -1,20 +1,23 @@
-# GPIO Hanlder
+# GPIO Handler
 
-The GPIO Handler is a component of the Automatic License Plate Recognition System (ALPR System) designed to interface with GPIO pins on a Jetson Nano. It listens for MQTT messages to control hardware components such as ramps.
+The GPIO Handler is a component of the Automatic License Plate Recognition System (ALPR System) designed to interface
+with GPIO pins on a Jetson Nano. It listens for MQTT messages to control hardware components such as ramps.
 
 ## Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
 - [Setup Instructions](#setup-instructions)
-  - [Generating Certificates](#generating-certificates)
+    - [Generating Certificates](#generating-certificates)
 - [License](#license)
 
 ## Overview <a id='overview'></a>
 
-The GPIO Handler subscribes to specific MQTT topics and controls GPIO pins on a Jetson Nano based on the received messages. It uses SSL/TLS certificates to secure the communication with the MQTT broker.
+The GPIO Handler subscribes to specific MQTT topics and controls GPIO pins on a Jetson Nano based on the received
+messages. It uses SSL/TLS certificates to secure the communication with the MQTT broker.
 
 ## Features <a id='features'></a>
+
 - Subscribes to MQTT topics to control GPIO pins.
 - Configurable via JSON configuration files.
 - Secure communication with the MQTT broker (Databus) using SSL/TLS.
@@ -23,43 +26,49 @@ The GPIO Handler subscribes to specific MQTT topics and controls GPIO pins on a 
 
 ### Configuration
 
-1. Update the configuration in the main script or create a JSON configuration file for the MQTT settings and certificate paths.
+Configuration of the GPIO Handler is done using a YAML file or environment variables. The configuration file must be
+placed in the same directory as the executable and named `config.yaml` (place it inside `/var/opt/docker/alpr-system/gpio-handler/`:). The following is an example configuration file:
 
-```python
-config = {
-    'broker': 'databus',
-    'port': 8883,
-    'client_id': 'gpio-handler',
-    'tls_ca_cert': './certs/ca.crt',
-    'tls_certfile': './certs/databus-gpio-handler.crt',
-    'tls_keyfile': './certs/databus-gpio-handler.key',
-}
+```yaml
+# MQTT client configuration
+mqtt:
+  broker: "databus"
+  port: 8883
+  clientId: "gpio-handler" # Required. Must be unique on the MQTT broker
+  auth: # Optional. Leave empty if no authentication is required
+    username: ""
+    password: ""
+  tls: # Optional. Leave empty if no TLS is required
+    enabled: true
+    ca: "./certs/ca.crt"
+    cert: "./certs/databus-gpio-handler.crt"
+    key: "./certs/databus-gpio-handler.key"
+
+# GPIO configuration for gate control
+gate:
+  # Closing settings
+  close:
+    inverse: true # Optional. Invert the output signal
+    pin: 17 # Optional. GPIO pin number
+  # Opening settings
+  open:
+    inverse: false # Optional. Invert the output signal
+    pin: 18 # Required. GPIO pin number
+
+# Logging configuration (optional)
+logging:
+  level: "info" # Log level: "debug", "info", "warn", "error", "fatal"
+  print_to_stdout: False
+  log_in_file: True
 ```
-2. Set up the MQTT message handling:
-The GPIO Handler listens for messages on the topic `alpr/ramp/cmd` and toggles the GPIO pin based on the message payload.
-
-```python
-def handle_mqtt(client, userdata, message):
-    try:
-        topic = message.topic
-        data = json.loads(message.payload)
-        logging.debug(data)
-
-        if topic == "alpr/ramp/cmd":
-            if data["value"] == 1:
-                GPIO.output(OUTPUT_PIN, GPIO.HIGH)
-            elif data["value"] == 0:
-                GPIO.output(OUTPUT_PIN, GPIO.LOW)
-            else:
-                logging.error("Invalid command for ramp!")
-        else:
-            logging.debug("Unknown mqtt topic: {}".format(topic))
-    except Exception as e:
-        logging.error("Exception at handle_mqtt: {}".format(e))
+You can copy sample file:
+```bash
+cp config.yaml /var/opt/docker/alpr-system/gpio-handler/
 ```
 ### Generating Certificates <a id='generating-certificates'></a>
 
-To secure the MQTT communication, you need to generate SSL/TLS certificates. You can use the `mqtt-cryptogen` tool available at [CuAuPro/mqtt-cryptogen](https://github.com/CuAuPro/mqtt-cryptogen).
+To secure the MQTT communication, you need to generate SSL/TLS certificates. You can use the `mqtt-cryptogen` tool
+available at [CuAuPro/mqtt-cryptogen](https://github.com/CuAuPro/mqtt-cryptogen).
 
 1. Clone the `mqtt-cryptogen` repository:
 
@@ -81,8 +90,8 @@ python <path-to-mqtt-cryptogen>/gen_client_cert.py -p <path-to-databus>/config-c
 ```bash
 python <path-to-mqtt-cryptogen>/extract_pkcs12_certs.py -p <path-to-databus>/config-certs/extract_pkcs12_req.json
 ```
-3. Configure (if desired) `acl.conf`.
 
+3. Configure (if desired) `acl.conf`.
 
 ## License <a id='license'></a>
 

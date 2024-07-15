@@ -1,0 +1,56 @@
+# MQTT client configuration
+mqtt:
+  broker: "databus"
+  port: 8883
+  clientId: "ai-engine" # Required. Must be unique on the MQTT broker
+  auth: # Optional. Leave empty if no authentication is required
+    username: ""
+    password: ""
+  tls: # Optional. Leave empty if no TLS is required
+    enabled: true
+    ca: "./certs/ca.crt"
+    cert: "./certs/databus-ai-engine.crt"
+    key: "./certs/databus-ai-engine.key"
+
+# AI inference configuration
+engine:
+  network: "ssd-mobilenet-v2"
+  model: "./engine/models/model-detect.onnx"
+  class_labels: "./engine/models/labels-detect.txt"
+  input_blob: "input_0"
+  output_cvg: "scores"
+  output_bbox: "boxes"
+  overlay: box,labels,conf
+  width: 1920
+  height: 1080
+  threshold: 0.5
+  ocr_model: "./engine/models/model-ocr.trt"
+  headless: true
+  max_retries: 5
+
+# Camera configuration
+camera:
+  - id: 1
+    input_stream: "rtsp://192.168.0.15:554/user=admin&password=&channel=1&stream=0.sdp?" # URL of the first camera stream
+    output_stream: "rtsp://@:8554/stream" # URL of the first camera output stream
+    image_size: 
+      width: 1920
+      height: 1080
+    regions:
+      - name: "entry_region"
+        coordinates: 
+          - {x: 240, y: 540}
+          - {x: 960, y: 540}
+          - {x: 960, y: 810}
+          - {x: 240, y: 810}
+      - name: "exit_region"
+        coordinates: 
+          - {x: 960, y: 540}
+          - {x: 1680, y: 540}
+          - {x: 1680, y: 810}
+          - {x: 960, y: 810}
+# Logging configuration (optional)
+logging:
+  level: "info" # Log level: "debug", "info", "warn", "error", "fatal"
+  print_to_stdout: False
+  log_in_file: True

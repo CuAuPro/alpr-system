@@ -48,7 +48,14 @@ Then copy certificates to each components' volume:
 cp -r <component>/* /var/opt/docker/alpr-system/<component>/certs/
 ```
 
-3. Setup (if desired) `acl.conf`.
+3. Setup `mosquitto.conf`.
+
+Then copy file to volume:
+```bash
+cp mosquitto.conf /var/opt/docker/alpr-system/databus
+```
+
+4. Setup (if desired) `acl.conf`.
 
 Then copy file to volume:
 ```bash

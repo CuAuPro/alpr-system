@@ -2,68 +2,56 @@ version: '3.8'
 
 services:
 
-
   frontend:
-    container_name: frontend  # Name the frontend container
-    image: cuaupro/alpr-frontend:latest
-    build:
-      context: ./frontend  # Path to the frontend Dockerfile
+    container_name: frontend
+    image: cuaupro/alpr-system_frontend:latest  # Use the image from Docker Hub
     ports:
-      - "443:443"  # Map host port 443 to container port 443 for HTTPS
+      - "443:443"
     depends_on:
-      - backend  # Ensure the backend service starts before the frontend
+      - backend
     volumes:
-      # Bind volume with certificates at runtime
       - /var/opt/docker/alpr-system/frontend/certs/https:/etc/nginx/certs
     networks:
-      - alpr-network  # Connect to the alpr-network
+      - alpr-network
     deploy:
       resources:
         limits:
-          memory: 64M  # Limit the maximum memory usage
+          memory: 64M
         reservations:
-          memory: 32M  # Reserve memory
-
+          memory: 32M
 
   backend:
-    container_name: backend  # Name the backend container
-    image: cuaupro/alpr-backend:latest
-    build:
-      context: ./backend  # Path to the backend Dockerfile
+    container_name: backend
+    image: cuaupro/alpr-system_backend:latest  # Use the image from Docker Hub
     ports:
-      - "8443:443"  # Map host port 8443 to container port 443 for HTTPS
+      - "8443:443"
     environment:
-      - MQTT_BROKER=databus:8883  # Set the MQTT broker address
-      - MQTT_SSL=true  # Enable SSL for MQTT
+      - MQTT_BROKER=databus:8883
+      - MQTT_SSL=true
     depends_on:
-      - databus  # Ensure the databus service starts before the backend
+      - databus
     networks:
-      - alpr-network  # Connect to the alpr-network
+      - alpr-network
     deploy:
       resources:
         limits:
-          memory: 128M  # Limit the maximum memory usage to 128MB
+          memory: 128M
         reservations:
-          memory: 90M  # Reserve 90MB of memory
+          memory: 90M
     volumes:
       - /var/opt/docker/alpr-system/database:/app/backend/database
-      # Bind volume with certificates at runtime
       - /var/opt/docker/alpr-system/backend/certs:/app/backend/certs
 
-
   gpio-handler:
-    container_name: gpio-handler  # Name the databus container
-    image: cuaupro/alpr-gpio-handler:latest
-    build:
-      context: ./gpio-handler  # Path to the databus Dockerfile
-      dockerfile: Dockerfile
+    container_name: gpio-handler
+    image: cuaupro/alpr-system_gpio-handler:latest  # Use the image from Docker Hub
     depends_on:
-      - databus  # Ensure the databus service starts before the backend
+      - databus
     volumes:
-      # Bind volume with certificates at runtime
       - /var/opt/docker/alpr-system/gpio-handler/certs:/app/certs
+      - /var/opt/docker/alpr-system/gpio-handler/config.yaml:/app/config.yaml
     networks:
-      - alpr-network  # Connect to the alpr-network
+      - alpr-network
     runtime: nvidia
     environment:
       - JETSON_MODEL_NAME=JETSON_NANO
@@ -72,48 +60,41 @@ services:
     deploy:
       resources:
         limits:
-          memory: 64M  # Limit the maximum memory usage
+          memory: 64M
         reservations:
-          memory: 32M  # Reserve memory
-
+          memory: 32M
 
   databus:
-    container_name: databus  # Name the databus container
-    restart: unless-stopped  # Restart policy for the databus container
-    build:
-      context: ./databus  # Path to the databus Dockerfile
+    container_name: databus
+    restart: unless-stopped
+    image: cuaupro/alpr-system_databus:latest  # Use the image from Docker Hub
     ports:
-      - "8883:8883"  # Map host port 8883 to container port 8883 for MQTT
+      - "8883:8883"
     volumes:
-      # Bind volume with certificates at runtime
       - /var/opt/docker/alpr-system/databus:/etc/mosquitto
     networks:
-      - alpr-network  # Connect to the alpr-network
-    hostname: "databus"  # Set the hostname for the databus container
+      - alpr-network
+    hostname: "databus"
     deploy:
       resources:
         limits:
-          memory: 64M  # Limit the maximum memory usage
+          memory: 64M
         reservations:
-          memory: 32M  # Reserve memory
+          memory: 32M
 
   ai-engine:
     container_name: ai-engine
-    image: cuaupro/alpr-ai-engine:latest
-    build:
-      context: ./ai-engine  # Path to the Dockerfile
+    image: cuaupro/alpr-system_ai-engine:latest  # Use the image from Docker Hub
     depends_on:
-      - databus  # Ensure the databus service starts before the backend
+      - databus
     runtime: nvidia
     networks:
-      - alpr-network  # Connect to the alpr-network
+      - alpr-network
     ports:
-      - "8554:8554"  # Example RTSP server port
-    devices:
-      - /dev/video0
+      - "8554:8554"
     volumes:
-      # Bind volume with certificates at runtime
       - /var/opt/docker/alpr-system/ai-engine/certs:/app/certs
+      - /var/opt/docker/alpr-system/ai-engine/config.yaml:/app/config.yaml
     deploy:
       resources:
         limits:
