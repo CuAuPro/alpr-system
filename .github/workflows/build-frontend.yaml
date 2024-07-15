@@ -13,8 +13,6 @@ on:
       - 'backend/**'
 
 jobs:
-
-  # Build and push Docker image
   build:
     name: Build and Push
     runs-on: ubuntu-latest
@@ -23,8 +21,7 @@ jobs:
       - name: Checkout
         uses: ./.github/workflows/build.yaml
         with:
-          platform: linux/arm64
           service: frontend
           dockerfile: ./frontend/Dockerfile
-          docker_repository: alpr-frontend
+          docker_repository: alpr-system_frontend
           push: ${{ github.event_name != 'pull_request' }}

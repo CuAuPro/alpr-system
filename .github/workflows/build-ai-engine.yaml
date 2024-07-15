@@ -39,8 +39,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          # todo changeme
-          images: CuAuPro/alpr-ai-engine
+          images: cuaupro/alpr-system_ai-engine
           flavor: |
             latest=true
           tags: |

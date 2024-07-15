@@ -23,8 +23,7 @@ jobs:
       - name: Checkout
         uses: ./.github/workflows/build.yaml
         with:
-          platform: linux/arm64
           service: backend
           dockerfile: ./backend/Dockerfile
-          docker_repository: alpr-backend
+          docker_repository: alpr-system_backend
           push: ${{ github.event_name != 'pull_request' }}

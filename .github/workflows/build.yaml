@@ -53,7 +53,6 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          # todo changeme
           images: cuaupro/${{ inputs.docker_repository }}
           tags: |
             type=ref,event=branch

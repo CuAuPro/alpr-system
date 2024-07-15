@@ -38,8 +38,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          # todo changeme
-          images: CuAuPro/alpr-gpio-handler
+          images: cuaupro/alpr-system_gpio-handler
           flavor: |
             latest=true
           tags: |
