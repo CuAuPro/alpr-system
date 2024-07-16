@@ -1,0 +1,27 @@
+name: Build and Push Frontend
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
+  pull_request:
+    types: [ opened, synchronize ]
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+
+jobs:
+  build:
+    name: Build and Push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: ./.github/workflows/build.yaml
+        with:
+          service: frontend
+          dockerfile: ./frontend/Dockerfile
+          docker_repository: alpr-system_frontend
+          push: ${{ github.event_name != 'pull_request' }}
