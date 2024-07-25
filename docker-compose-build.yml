@@ -13,7 +13,7 @@ services:
       - backend  # Ensure the backend service starts before the frontend
     volumes:
       # Bind volume with certificates at runtime
-      - /var/opt/docker/alpr-system/frontend/certs/https:/etc/nginx/certs
+      - ./frontend/certs/https:/etc/nginx/certs
     networks:
       - alpr-network  # Connect to the alpr-network
     deploy:
@@ -44,9 +44,11 @@ services:
         reservations:
           memory: 90M  # Reserve 90MB of memory
     volumes:
-      - /var/opt/docker/alpr-system/database:/app/backend/database
+      - ./backend/database:/app/backend/database
       # Bind volume with certificates at runtime
-      - /var/opt/docker/alpr-system/backend/certs:/app/backend/certs
+      - ./backend/certs:/app/backend/certs
+      - ./backend/env:/app/backend/env
+
 
 
   gpio-handler:
@@ -58,8 +60,8 @@ services:
       - databus  # Ensure the databus service starts before the backend
     volumes:
       # Bind volume with certificates at runtime
-      - /var/opt/docker/alpr-system/gpio-handler/certs:/app/certs
-      - /var/opt/docker/alpr-system/gpio-handler/config.yaml:/app/config.yaml
+      - ./gpio-handler/certs:/app/certs
+      - ./gpio-handler/config.yaml:/app/config.yaml
     networks:
       - alpr-network  # Connect to the alpr-network
     runtime: nvidia
@@ -84,7 +86,7 @@ services:
       - "8883:8883"  # Map host port 8883 to container port 8883 for MQTT
     volumes:
       # Bind volume with certificates at runtime
-      - /var/opt/docker/alpr-system/databus:/etc/mosquitto
+      - ./databus:/etc/mosquitto
     networks:
       - alpr-network  # Connect to the alpr-network
     hostname: "databus"  # Set the hostname for the databus container
@@ -108,8 +110,8 @@ services:
       - "8554:8554"  # Example RTSP server port
     volumes:
       # Bind volume with certificates at runtime
-      - /var/opt/docker/alpr-system/ai-engine/certs:/app/certs
-      - /var/opt/docker/alpr-system/ai-engine/config.yaml:/app/config.yaml
+      - ./ai-engine/certs:/app/certs
+      - ./ai-engine/config.yaml:/app/config.yaml
     deploy:
       resources:
         limits:

@@ -199,43 +199,14 @@ You also need to create persistend database file. To create a directory in and s
 follow these steps:
 
 ### Persistent Database File <a id='pesistent-db'></a>
-You need to create a persistent database file. To set up a volume for the backend alpr.db, follow these steps:
-1. Create Directory: Open a terminal and run the following command to create a directory named `alpr-system`
-   in `/var/opt/docker/database`:
-
-    ```bash
-    sudo mkdir -p /var/opt/docker/alpr-system/database
-    ```
-
-2. Copy initialized `alpr.db` to `/var/opt/docker/alpr-system/database`.
-
-    ```bash
-    sudo cp backend/database/alpr.db /var/opt/docker/alpr-system/database
-    ```
+Persistent database file `alpr.db` is placed inside `./backend/database` directory.
 
 ### Additional Configuration Files <a id='config-files'></a>
 To ensure that volume binds work correctly for additional configuration files, follow these steps:
-1. Create Necessary Directories:
 
-    ```bash
-    sudo mkdir -p /var/opt/docker/alpr-system/gpio-handler
-    sudo mkdir -p /var/opt/docker/alpr-system/ai-engine
-    ```
+1. Edit Configuration Files `./gpio-handler/config.yaml` and `./ai-engine/config.yaml`.
 
-2. Copy Configuration Files:
-
-    ```bash
-    sudo cp gpio-handler/config.yaml /var/opt/docker/alpr-system/gpio-handler/config.yaml
-    sudo cp ai-engine/config.yaml /var/opt/docker/alpr-system/ai-engine/config.yaml
-    ```
 ### Certificates <a id='certificates'></a>
-To ensure that volume binds work correctly for additional configuration files, follow these steps:
-1. Create Necessary Directories:
-
-    ```bash
-    sudo mkdir -p /var/opt/docker/alpr-system/backend
-    sudo mkdir -p /var/opt/docker/alpr-system/frontend
-    ```
 
 #### HTTPS <a id='certificates-https'></a>
 Please refer to [`backend/README`](backend/README.md). You need to do:
@@ -251,25 +222,16 @@ openssl req -nodes -new -x509 -keyout key.pem -out cert.pem -days 3650
 Then copy certificates to docker volume folder:
 
 ```bash
-sudo mkdir -p /var/opt/docker/alpr-system/backend/certs/https/ && sudo mv cert.pem /var/opt/docker/alpr-system/backend/certs/https/
-sudo mv key.pem /var/opt/docker/alpr-system/backend/certs/https/
+sudo mv cert.pem ./backend/certs/https/
+sudo mv key.pem ./backend/certs/https/
 
-sudo mkdir -p /var/opt/docker/alpr-system/frontend/certs/https/ && sudo cp /var/opt/docker/alpr-system/backend/certs/https/cert.pem /var/opt/docker/alpr-system/frontend/certs/https/
-sudo cp /var/opt/docker/alpr-system/backend/certs/https/key.pem /var/opt/docker/alpr-system/frontend/certs/https/
+sudo cp ./backend/certs/https/cert.pem ./frontend/certs/https/
+sudo cp ./backend/certs/https/key.pem ./frontend/certs/https/
 ```
 
 
-#### Databus <a id='certificates-https'></a>
-For databus communication, refer to specific documentation [`databus/README`](databus/README.md) for certificate generation and configuration. In any case, you need to create directories:
-
-```bash
-sudo mkdir -p /var/opt/docker/alpr-system/backend/certs/databus/
-sudo mkdir -p /var/opt/docker/alpr-system/frontend/certs/databus/
-
-sudo mkdir -p /var/opt/docker/alpr-system/databus/certs/
-sudo mkdir -p /var/opt/docker/alpr-system/ai-engine/certs/
-sudo mkdir -p /var/opt/docker/alpr-system/gpio-handler/certs/
-```
+#### Databus <a id='certificates-databus'></a>
+For databus communication, refer to specific documentation [`databus/README`](databus/README.md) for certificate generation and configuration. Complete example is provided.
 
 ### Starting the Application <a id='starting-app'></a>
 

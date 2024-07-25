@@ -34,7 +34,7 @@ update or replace these models with custom ones as needed.
 
 ### Configuration
 
-1. Create `config.yaml` file inside `/var/opt/docker/alpr-system/ai-engine/`:
+1. Create `config.yaml` file inside `./ai-engine/`:
 
   ```yaml
   # MQTT client configuration
@@ -76,10 +76,7 @@ update or replace these models with custom ones as needed.
     print_to_stdout: False
     log_in_file: True
   ```
-You can copy sample file:
-```bash
-cp config.yaml /var/opt/docker/alpr-system/ai-engine/
-```
+
 2. Set up the MQTT message publishing:
 
 The AI Inference component publishes recognized license plates to the MQTT topic `alpr/ramp/req`.

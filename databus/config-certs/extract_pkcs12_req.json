@@ -1,7 +1,7 @@
 {
     "clients": [
         {
-            "path":     "generated-alpr/",
+            "path":     "generated-alpr-cert/",
             "alias":    "databus-broker",
             "passcode": "123456",
             "new_passcode": "",
@@ -11,7 +11,7 @@
 
         },
         {
-            "path":     "generated-alpr/",
+            "path":     "generated-alpr-cert/",
             "alias":    "databus-admin",
             "passcode": "123456",
             "new_passcode": "",
@@ -21,7 +21,7 @@
 
         },
         {
-            "path":     "generated-alpr/",
+            "path":     "generated-alpr-cert/",
             "alias":    "databus-backend",
             "passcode": "123456",
             "new_passcode": "",
@@ -31,7 +31,7 @@
 
         },
         {
-            "path":     "generated-alpr/",
+            "path":     "generated-alpr-cert/",
             "alias":    "databus-gpio-handler",
             "passcode": "123456",
             "new_passcode": "",
@@ -41,7 +41,7 @@
 
         },
         {
-            "path":     "generated-alpr/",
+            "path":     "generated-alpr-cert/",
             "alias":    "databus-ai-engine",
             "passcode": "123456",
             "new_passcode": "",

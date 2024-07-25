@@ -25,42 +25,34 @@ To secure the MQTT communication, you need to generate SSL/TLS certificates. You
 
 ```bash
 git clone https://github.com/CuAuPro/mqtt-cryptogen.git
-cd mqtt-cryptogen
 ```
 
 2. Follow the instructions in the cloned repository, using the configuration files provided in `config-certs/`:
 
 ```bash
-python <path-to-mqtt-cryptogen>/gen_root_cert.py -p <path-to-databus>/config-certs/root_cert_req.json
+python ./mqtt-cryptogen/gen_root_cert.py -p ./databus/config-certs/root_cert_req.json
 ```
 
 ```bash
-python <path-to-mqtt-cryptogen>/gen_client_cert.py -p <path-to-databus>/config-certs/client_cert_req.json 
+python ./mqtt-cryptogen/gen_client_cert.py -p ./databus/config-certs/client_cert_req.json 
 ```
 
 ```bash
-python <path-to-mqtt-cryptogen>/extract_pkcs12_certs.py -p <path-to-databus>/config-certs/extract_pkcs12_req.json
+python ./mqtt-cryptogen/extract_pkcs12_certs.py -p ./databus/config-certs/extract_pkcs12_req.json
 ```
 
 Then copy certificates to each components' volume:
 
 ```bash
-cp -r <component>/* /var/opt/docker/alpr-system/<component>/certs/
+cp -r ./generated-alpr-cert/databus-broker/* ./databus/certs/
+cp -r ./generated-alpr-cert/databus-backend/* ./backend/certs/databus/
+cp -r ./generated-alpr-cert/databus-gpio-handler/* ./gpio-handler/certs/
+cp -r ./generated-alpr-cert/databus-ai-engine/* ./ai-engine/certs/
 ```
 
 3. Setup `mosquitto.conf`.
 
-Then copy file to volume:
-```bash
-cp mosquitto.conf /var/opt/docker/alpr-system/databus
-```
-
 4. Setup (if desired) `acl.conf`.
-
-Then copy file to volume:
-```bash
-cp acl.conf /var/opt/docker/alpr-system/databus
-```
 
 ## License <a id='license'></a>
 

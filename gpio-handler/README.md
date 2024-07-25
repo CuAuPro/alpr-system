@@ -27,7 +27,7 @@ messages. It uses SSL/TLS certificates to secure the communication with the MQTT
 ### Configuration
 
 Configuration of the GPIO Handler is done using a YAML file or environment variables. The configuration file must be
-placed in the same directory as the executable and named `config.yaml` (place it inside `/var/opt/docker/alpr-system/gpio-handler/`:). The following is an example configuration file:
+placed in the same directory as the executable and named `config.yaml` (place it inside `./gpio-handler/`:). The following is an example configuration file:
 
 ```yaml
 # MQTT client configuration
@@ -61,10 +61,7 @@ logging:
   print_to_stdout: False
   log_in_file: True
 ```
-You can copy sample file:
-```bash
-cp config.yaml /var/opt/docker/alpr-system/gpio-handler/
-```
+
 ### Generating Certificates <a id='generating-certificates'></a>
 
 To secure the MQTT communication, you need to generate SSL/TLS certificates. You can use the `mqtt-cryptogen` tool

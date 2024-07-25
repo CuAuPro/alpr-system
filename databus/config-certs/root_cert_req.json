@@ -1,5 +1,5 @@
 {
-    "store_folder":         "generated-alpr/",
+    "store_folder":         "generated-alpr-cert/",
     "new_passcode":         "123456",
     "validity_period":      "10 years",
 

@@ -10,7 +10,7 @@ services:
     depends_on:
       - backend
     volumes:
-      - /var/opt/docker/alpr-system/frontend/certs/https:/etc/nginx/certs
+      - ./frontend/certs/https:/etc/nginx/certs
     networks:
       - alpr-network
     deploy:
@@ -39,8 +39,10 @@ services:
         reservations:
           memory: 90M
     volumes:
-      - /var/opt/docker/alpr-system/database:/app/backend/database
-      - /var/opt/docker/alpr-system/backend/certs:/app/backend/certs
+      - ./backend/database:/app/backend/database
+      - ./backend/certs:/app/backend/certs
+      - ./backend/env:/app/backend/env
+
 
   gpio-handler:
     container_name: gpio-handler
@@ -48,8 +50,8 @@ services:
     depends_on:
       - databus
     volumes:
-      - /var/opt/docker/alpr-system/gpio-handler/certs:/app/certs
-      - /var/opt/docker/alpr-system/gpio-handler/config.yaml:/app/config.yaml
+      - ./gpio-handler/certs:/app/certs
+      - ./gpio-handler/config.yaml:/app/config.yaml
     networks:
       - alpr-network
     runtime: nvidia
@@ -71,7 +73,7 @@ services:
     ports:
       - "8883:8883"
     volumes:
-      - /var/opt/docker/alpr-system/databus:/etc/mosquitto
+      - ./databus:/etc/mosquitto
     networks:
       - alpr-network
     hostname: "databus"
@@ -93,8 +95,8 @@ services:
     ports:
       - "8554:8554"
     volumes:
-      - /var/opt/docker/alpr-system/ai-engine/certs:/app/certs
-      - /var/opt/docker/alpr-system/ai-engine/config.yaml:/app/config.yaml
+      - ./ai-engine/certs:/app/certs
+      - ./ai-engine/config.yaml:/app/config.yaml
     deploy:
       resources:
         limits:

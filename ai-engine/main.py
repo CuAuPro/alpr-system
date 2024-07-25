@@ -1,5 +1,3 @@
-
-
 import jetson.inference
 import jetson.utils
 
@@ -20,8 +18,8 @@ try:
     # Load configuration
     config = load_config('config.yaml')
 except:
-	logging.error("INVALID CONFIG FILE.")
-	sys.exit(0)
+    logging.error("INVALID CONFIG FILE.")
+    sys.exit(0)
 
 # Map logging level string to numerical constant
 log_level = {
@@ -98,8 +96,11 @@ net = jetson.inference.detectNet(
 # Create video sources & outputs
 is_headless = ["--headless"] if config['engine']['headless'] else []
 input_stream = jetson.utils.videoSource(config['camera'][0]['input_stream'], argv)
-output_stream = jetson.utils.videoOutput(config['camera'][0]['output_stream'], argv=argv+is_headless)
-#capture = cv2.VideoCapture(camera_config['input_stream'])
+
+# Check if output_stream is specified
+output_stream = None
+if camera_config.get('output_stream'):
+    output_stream = jetson.utils.videoOutput(camera_config['output_stream'], argv=argv + is_headless)
 
 
 # Max retries configuration
@@ -126,8 +127,9 @@ while True:
             }
             mqtt_engine.publish(mqtt_message, "alpr/ai-engine/error")
             break  # Exit the loop after exceeding max retries
-        time.sleep(1)  # Wait for a short period before trying again
+        time.sleep(5)  # Wait for a short period before trying again
         continue
+
     # Extract regions based on the configuration
     for region in camera_regions:
         try:
@@ -178,20 +180,22 @@ while True:
                     logging.error(f"Error processing detection: {e}")
         except Exception as e:
             logging.error(f"Error processing region {region['name']}: {e}")
+
     try:
-        # render the image
-        img = jetson.utils.cudaFromNumpy(raw_img)
-        output_stream.Render(img)
+        # render the image if output_stream is defined
+        if output_stream:
+            img = jetson.utils.cudaFromNumpy(raw_img)
+            output_stream.Render(img)
 
-        # update the title bar
-        output_stream.SetStatus("{:s} | Network {:.0f} FPS".format(config['engine']['network'], net.GetNetworkFPS()))
+            # update the title bar
+            output_stream.SetStatus("{:s} | Network {:.0f} FPS".format(config['engine']['network'], net.GetNetworkFPS()))
 
-        # print out performance info
-        logging.debug("Network {:.0f} FPS".format(net.GetNetworkFPS()))
-        logging.debug("========================================")
+            # print out performance info
+            logging.debug("Network {:.0f} FPS".format(net.GetNetworkFPS()))
+            logging.debug("========================================")
     except Exception as e:
         logging.error(f"Error rendering image: {e}")
-    # exit on input/output EOS
-    if not input_stream.IsStreaming() or not output_stream.IsStreaming():
-       break
 
+    # exit on input/output EOS
+    if not input_stream.IsStreaming() or (output_stream and not output_stream.IsStreaming()):
+       break

@@ -1,6 +1,6 @@
 {
-    "store_folder":         "generated-alpr/",
-    "signing_cert_path":    "generated-alpr/master.p12",
+    "store_folder":         "generated-alpr-cert/",
+    "signing_cert_path":    "generated-alpr-cert/master.p12",
     "passcode":             "123456",
 
     "clients": [
