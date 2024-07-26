@@ -248,6 +248,23 @@ To build the Docker images and run the application locally, use the provided `do
 docker-compose -f docker-compose-build.yml up --build
 ```
 
+Push images to Docker Hub:
+
+```bash
+sudo docker tag alpr-system_backend:latest cuaupro/alpr-system_backend:latest
+sudo docker tag alpr-system_frontend:latest cuaupro/alpr-system_frontend:latest
+sudo docker tag alpr-system_databus:latest cuaupro/alpr-system_databus:latest
+sudo docker tag alpr-system_gpio-handler:latest cuaupro/alpr-system_gpio-handler:latest
+sudo docker tag alpr-system_ai-engine:latest cuaupro/alpr-system_ai-engine:latest
+
+sudo docker push cuaupro/alpr-system_backend:latest
+sudo docker push cuaupro/alpr-system_frontend:latest
+sudo docker push cuaupro/alpr-system_databus:latest
+sudo docker push cuaupro/alpr-system_gpio-handler:latest
+sudo docker push cuaupro/alpr-system_ai-engine:latest
+
+```
+
 ## License <a id='license'></a>
 
 This project is licensed under the terms specified in the [LICENSE](./LICENSE) file.

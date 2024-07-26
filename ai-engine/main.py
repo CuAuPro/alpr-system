@@ -19,7 +19,7 @@ try:
     config = load_config('config.yaml')
 except:
     logging.error("INVALID CONFIG FILE.")
-    sys.exit(0)
+    sys.exit(1)
 
 # Map logging level string to numerical constant
 log_level = {
@@ -95,8 +95,11 @@ net = jetson.inference.detectNet(
 
 # Create video sources & outputs
 is_headless = ["--headless"] if config['engine']['headless'] else []
-input_stream = jetson.utils.videoSource(config['camera'][0]['input_stream'], argv)
-
+try:
+    input_stream = jetson.utils.videoSource(config['camera'][0]['input_stream'], argv)
+except Exception as e:
+    logging.error(f"Could not connect to video source: {e}")
+    sys.exit(1)
 # Check if output_stream is specified
 output_stream = None
 if camera_config.get('output_stream'):

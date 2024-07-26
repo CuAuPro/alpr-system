@@ -67,7 +67,7 @@ def on_disconnect(client, userdata, rc):
         reconnect_count += 1
 
     logging.info("Reconnect failed after {} attempts. Exiting...".format(reconnect_count))
-    sys.exit()  # Exit the program
+    sys.exit(1)  # Exit the program
 
 
 def on_publish(client, userdata, mid):
