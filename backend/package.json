@@ -59,7 +59,7 @@
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
-    "openapi-typescript": "^6.7.5",
+    "openapi-typescript": "^7.2.0",
     "prettier": "^3.0.3",
     "run-script-os": "^1.1.6",
     "typescript": "^5.2.2"
