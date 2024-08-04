@@ -4,6 +4,7 @@ services:
 
   frontend:
     container_name: frontend
+    restart: unless-stopped
     image: cuaupro/alpr-system_frontend:latest  # Use the image from Docker Hub
     ports:
       - "443:443"
@@ -22,6 +23,7 @@ services:
 
   backend:
     container_name: backend
+    restart: unless-stopped
     image: cuaupro/alpr-system_backend:latest  # Use the image from Docker Hub
     ports:
       - "8443:443"
@@ -46,12 +48,14 @@ services:
 
   gpio-handler:
     container_name: gpio-handler
+    restart: unless-stopped
     image: cuaupro/alpr-system_gpio-handler:latest  # Use the image from Docker Hub
     depends_on:
       - databus
     volumes:
       - ./gpio-handler/certs:/app/certs
       - ./gpio-handler/config.yaml:/app/config.yaml
+      - ./gpio-handler/log:/app/log
     networks:
       - alpr-network
     runtime: nvidia
@@ -86,6 +90,7 @@ services:
 
   ai-engine:
     container_name: ai-engine
+    restart: unless-stopped
     image: cuaupro/alpr-system_ai-engine:latest  # Use the image from Docker Hub
     depends_on:
       - databus
@@ -97,6 +102,7 @@ services:
     volumes:
       - ./ai-engine/certs:/app/certs
       - ./ai-engine/config.yaml:/app/config.yaml
+      - ./ai-engine/log:/app/log
     deploy:
       resources:
         limits:

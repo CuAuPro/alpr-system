@@ -5,6 +5,7 @@ services:
 
   frontend:
     container_name: frontend  # Name the frontend container
+    restart: unless-stopped
     build:
       context: ./frontend  # Path to the frontend Dockerfile
     ports:
@@ -26,6 +27,7 @@ services:
 
   backend:
     container_name: backend  # Name the backend container
+    restart: unless-stopped
     build:
       context: ./backend  # Path to the backend Dockerfile
     ports:
@@ -53,6 +55,7 @@ services:
 
   gpio-handler:
     container_name: gpio-handler  # Name the databus container
+    restart: unless-stopped
     build:
       context: ./gpio-handler  # Path to the databus Dockerfile
       dockerfile: Dockerfile
@@ -62,6 +65,7 @@ services:
       # Bind volume with certificates at runtime
       - ./gpio-handler/certs:/app/certs
       - ./gpio-handler/config.yaml:/app/config.yaml
+      - ./gpio-handler/log:/app/log
     networks:
       - alpr-network  # Connect to the alpr-network
     runtime: nvidia
@@ -99,6 +103,7 @@ services:
 
   ai-engine:
     container_name: ai-engine
+    restart: unless-stopped
     build:
       context: ./ai-engine  # Path to the Dockerfile
     depends_on:
@@ -112,6 +117,7 @@ services:
       # Bind volume with certificates at runtime
       - ./ai-engine/certs:/app/certs
       - ./ai-engine/config.yaml:/app/config.yaml
+      - ./ai-engine/log:/app/log
     deploy:
       resources:
         limits:

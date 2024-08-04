@@ -117,9 +117,21 @@ while True:
     try:
         # capture the next image
         img = input_stream.Capture()
+        if img is None:
+            logging.error("Captured image is None")
+            raise ValueError("Captured image is None")
+        
+        logging.debug(f"Captured image type: {type(img)}")
+        logging.debug(f"Captured image attributes: {dir(img)}")
+        
+        if not isinstance(img, jetson.utils.cudaImage):
+            logging.error("Captured image is not a cudaImage")
+            raise TypeError("Captured image is not a cudaImage")
+        
         raw_img = jetson.utils.cudaToNumpy(img)
         raw_img = cv2.resize(raw_img, (input_image_width, input_image_height))
         retry_counter = 0  # Reset counter on success
+
     except Exception as e:
         logging.error(f"Error capturing and processing image: {e}")
         retry_counter += 1
@@ -129,7 +141,7 @@ while True:
                 "message": f"Error capturing and processing image: {e}"
             }
             mqtt_engine.publish(mqtt_message, "alpr/ai-engine/error")
-            break  # Exit the loop after exceeding max retries
+            retry_counter = 0  # Reset counter to allow continued retries
         time.sleep(5)  # Wait for a short period before trying again
         continue
 
