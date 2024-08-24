@@ -38,26 +38,6 @@ npx openapi-typescript swagger.yaml -o schema.d.ts
 This will generate TypeScript types in a `schema.d.ts` file based on the Swagger API specification.
 
 
-### HTTPS Certificates
-Generate self-signed certificates for development purposes. For production, use certificates from a trusted Certificate Authority (CA).
-
-Use OpenSSL to generate a self-signed certificate:
-
-```bash
-mkdir -p certs/https & cd certs/https
-openssl req -nodes -new -x509 -keyout key.pem -out cert.pem -days 3650
-```
-
-Then copy certificates to docker volume folder:
-
-```bash
-cp cert.pem ./backend/certs/https/
-cp key.pem ./backend/certs/https/
-
-cp cert.pem ./frontend/certs/https/
-cp key.pem ./frontend/certs/https/
-```
-
 
 ### Installation
 

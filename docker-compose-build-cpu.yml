@@ -3,13 +3,24 @@ version: '3.8'
 services:
 
 
+  nginx:
+    container_name: alpr-nginx
+    restart: unless-stopped
+    image: nginx
+    ports:
+        - 80:80
+        - 443:443
+    networks:
+      - alpr-network
+    volumes:
+        - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+        - ./nginx/certs/https:/etc/nginx/certs
+
   frontend:
     container_name: alpr-frontend  # Name the frontend container
     restart: unless-stopped
     build:
       context: ./frontend  # Path to the frontend Dockerfile
-    ports:
-      - "443:443"  # Map host port 443 to container port 443 for HTTPS
     depends_on:
       - backend  # Ensure the backend service starts before the frontend
     volumes:
@@ -30,8 +41,6 @@ services:
     restart: unless-stopped
     build:
       context: ./backend  # Path to the backend Dockerfile
-    ports:
-      - "8443:443"  # Map host port 8443 to container port 443 for HTTPS
     environment:
       - MQTT_BROKER=databus:8883  # Set the MQTT broker address
       - MQTT_SSL=true  # Enable SSL for MQTT

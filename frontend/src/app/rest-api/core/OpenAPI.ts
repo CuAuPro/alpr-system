@@ -40,8 +40,7 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-	//BASE: 'https://localhost:443',
-	BASE: window.location.origin,
+	BASE: 'http://localhost:8080',
 	CREDENTIALS: 'include',
 	ENCODE_PATH: undefined,
 	HEADERS: undefined,

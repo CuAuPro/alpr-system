@@ -4,7 +4,7 @@
 import * as path from "path"
 
 import Express, { Request, Response } from 'express';
-//import * as http from "http";
+import * as http from "http";
 import * as https from "https";
 
 import * as fs from "fs";
@@ -45,14 +45,9 @@ export default class App {
     this.appContext = appContext;
     this.mqttProxy = this.appContext.mqttProxy; // Save mqttProxy instance
     this.licensePlateWhitelist = [];
-    //this.server = http.createServer(this.expressApplication);
 
-    const options = {
-      key: fs.readFileSync(path.resolve(__dirname, '../certs/https/key.pem')),
-      cert: fs.readFileSync(path.resolve(__dirname, '../certs/https/cert.pem'))
-    };
-
-    this.server = https.createServer(options, this.expressApplication);
+    // Create HTTP server for RSS
+    this.server = http.createServer(this.expressApplication);
 
     const swaggerDocument = YAML.load(path.join(__dirname, './routes/swagger.yaml'));
 
@@ -73,10 +68,8 @@ export default class App {
     // Use the cors middleware
     this.expressApplication.use(cors({
       origin: [
-        "http://localhost:4200",
-        "http://localhost:8443",
-        "http://localhost:443",
-        "http://frontend:443",
+        "https://localhost",
+        "https://frontend",
 
       ],
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
