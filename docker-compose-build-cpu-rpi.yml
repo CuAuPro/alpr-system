@@ -90,7 +90,7 @@ services:
     networks:
       - alpr-network  # Connect to the alpr-network
     ports:
-      - "8554:8554"  # Example RTSP server port
+      - "554:554"  # Example RTSP server port
     volumes:
       # Bind volume with certificates at runtime
       - ./ai-engine-cpu/certs:/app/certs
