@@ -1,6 +1,9 @@
 # Use a minimal base image suitable for ARM architecture
 FROM arm64v8/ubuntu:20.04
 
+# Define the build argument for the board choice
+ARG BOARD_CHOICE=26
+
 # Install necessary dependencies
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -9,19 +12,30 @@ RUN apt-get update \
         swig \
         python3-dev \
         python3-setuptools \
+        git \
+        build-essential \
+        python3.8-dev \
+        gcc \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
-# Clone the wiringOP-Python repository and build wiringOP
+
+
+# Clone and build wiringOP-Python with the selected board
 RUN cd /opt \
     && git clone --recursive https://github.com/orangepi-xunlong/wiringOP-Python.git \
     && cd wiringOP-Python \
     && python3 generate-bindings.py > bindings.i \
-    && python3 setup.py install \
-    && cd /opt/wiringOP \
-    && ./build clean \
-    && ./build
+    && echo "$BOARD_CHOICE" | python3 setup.py install
 
+# Modify the build script to remove sudo and uninstall calls
+RUN sed -i 's/sudo //g' /opt/wiringOP-Python/wiringOP/build \
+    && sed -i '/uninstall/d' /opt/wiringOP-Python/wiringOP/build
+    
+# Build and install wiringOP with the selected board
+RUN cd /opt/wiringOP-Python/wiringOP \
+    && echo "$BOARD_CHOICE" | ./build clean \
+    && echo "$BOARD_CHOICE" | ./build
 # Set the working directory
 WORKDIR /app
 
@@ -31,5 +45,5 @@ COPY . .
 # Install Python dependencies
 RUN pip3 install -r requirements.txt
 
-# Set the default command to run your application
-CMD [ "python3", "./main.py" ]
+# Set the command to run the application
+CMD ["python3", "./main.py"]
