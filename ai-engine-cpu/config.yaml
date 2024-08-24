@@ -25,6 +25,7 @@ engine:
   threshold: 0.5
   top_n: 5
   ocr_model: "./engine/models/model-ocr.onnx"
+  iou_threshold: 0.5
   max_retries: 5
 
 # Camera configuration

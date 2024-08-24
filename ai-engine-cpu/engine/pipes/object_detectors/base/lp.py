@@ -12,8 +12,9 @@ class LicensePlateDetector:
         self.height = 300
         self.color_channels = 3
 
-        self.confidence_threshold = config['threshold']
-        self.top_n = config['top_n']
+        self.confidence_threshold = config.get("threshold", 0.5)
+        self.top_n = config.get("top_n", 5)
+        self.iou_threshold= config.get("iou_threshold", 0.5)
 
     def load_model(self, engine_file_path):
         self.engine = rt.InferenceSession(engine_file_path) 
@@ -74,7 +75,7 @@ class LicensePlateDetector:
         
         return detections
 
-    def non_maximum_suppression(self, boxes, confidences, iou_threshold=0.5):
+    def non_maximum_suppression(self, boxes, confidences):
         if len(boxes) == 0:
             return []
 
@@ -101,7 +102,7 @@ class LicensePlateDetector:
             inter = w * h
             iou = inter / (areas[i] + areas[order[1:]] - inter)
 
-            indices_to_keep = np.where(iou <= iou_threshold)[0]
+            indices_to_keep = np.where(iou <= self.iou_threshold)[0]
             order = order[indices_to_keep + 1]
 
 
