@@ -74,6 +74,7 @@ logging.debug("[OCR] Initializing weights - DONE.")
 
 # Load the object detection network
 net = LicensePlateDetector(config["engine"])
+net.load_model(config["engine"]["model"])
 
 try:
     input_stream = cv2.VideoCapture(config["camera"][0]["input_stream"])

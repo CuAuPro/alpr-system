@@ -24,7 +24,10 @@ class LicensePlateDetector:
 
     def preprocess(self, img, need_preprocess=True):
         if need_preprocess:
-            image_data = cv2.resize(img, (self.width, self.height)).astype(np.float32)
+            image_data = cv2.resize(img, (self.width, self.height))
+            image_data = cv2.normalize(
+                image_data, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F
+            )
         image_data = np.transpose(image_data, (2, 0, 1))
         image_data = np.expand_dims(image_data, axis=0)
         return image_data
@@ -81,7 +84,7 @@ class LicensePlateDetector:
 
     def non_maximum_suppression(self, boxes, confidences):
         if len(boxes) == 0:
-            return []
+            return np.array([]), np.array([])  # Return two empty arrays instead of an empty list
 
         x1 = boxes[:, 0]
         y1 = boxes[:, 1]
