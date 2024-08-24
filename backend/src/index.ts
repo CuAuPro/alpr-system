@@ -26,7 +26,7 @@ const context: AppContext = {
   mqttProxy: mqttProxy
 };
 
-const PORT = parseInt(process.env.PORT) || 443;
+const PORT = parseInt(process.env.PORT) || 8080;
 const app = new App(context, PORT);
 app.start();
 

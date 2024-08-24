@@ -48,6 +48,7 @@ cp -r ./generated-alpr-cert/databus-broker/* ./databus/certs/
 cp -r ./generated-alpr-cert/databus-backend/* ./backend/certs/databus/
 cp -r ./generated-alpr-cert/databus-gpio-handler/* ./gpio-handler/certs/
 cp -r ./generated-alpr-cert/databus-ai-engine/* ./ai-engine/certs/
+cp -r ./generated-alpr-cert/databus-ai-engine/* ./ai-engine-cpu/certs/
 ```
 
 3. Setup `mosquitto.conf`.

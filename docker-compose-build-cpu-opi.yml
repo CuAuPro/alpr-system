@@ -4,9 +4,12 @@ services:
 
 
   nginx:
-    container_name: alpr-nginx
+    container_name: nginx
     restart: unless-stopped
     image: nginx
+    depends_on:
+      - backend
+      - frontend
     ports:
         - 80:80
         - 443:443
@@ -17,7 +20,7 @@ services:
         - ./nginx/certs/https:/etc/nginx/certs
 
   frontend:
-    container_name: alpr-frontend  # Name the frontend container
+    container_name: frontend  # Name the frontend container
     restart: unless-stopped
     build:
       context: ./frontend  # Path to the frontend Dockerfile
@@ -37,7 +40,7 @@ services:
 
 
   backend:
-    container_name: alpr-backend  # Name the backend container
+    container_name: backend  # Name the backend container
     restart: unless-stopped
     build:
       context: ./backend  # Path to the backend Dockerfile
@@ -61,7 +64,7 @@ services:
       - ./backend/env:/app/backend/env
 
   databus:
-    container_name: alpr-databus  # Name the databus container
+    container_name: databus  # Name the databus container
     restart: unless-stopped  # Restart policy for the databus container
     build:
       context: ./databus  # Path to the databus Dockerfile
@@ -81,7 +84,7 @@ services:
           memory: 32M  # Reserve memory
 
   ai-engine-cpu:
-    container_name: alpr-ai-engine-cpu
+    container_name: ai-engine-cpu
     restart: unless-stopped
     build:
       context: ./ai-engine-cpu  # Path to the Dockerfile
@@ -119,8 +122,7 @@ services:
       - ./gpio-handler/log:/app/log
     networks:
       - alpr-network  # Connect to the alpr-network
-    devices:
-      - /dev/gpiomem
+    privileged: true
     deploy:
       resources:
         limits:
@@ -129,3 +131,4 @@ services:
           memory: 32M  # Reserve memory
 networks:
   alpr-network:
+    driver: bridge
