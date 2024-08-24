@@ -6,7 +6,9 @@ import ssl
 import sys
 
 # Constants for reconnection settings
-FIRST_RECONNECT_DELAY = 1  # Initial delay before the first reconnection attempt (in seconds)
+FIRST_RECONNECT_DELAY = (
+    1  # Initial delay before the first reconnection attempt (in seconds)
+)
 RECONNECT_RATE = 1  # Rate at which the reconnection delay increases exponentially
 MAX_RECONNECT_COUNT = -1  # Maximum number of reconnection attempts (-1 for infinity)
 MAX_RECONNECT_DELAY = 10  # Maximum delay between reconnection attempts (in seconds)
@@ -43,10 +45,10 @@ def on_disconnect(client, userdata, rc):
         None
     """
     logging.info("Disconnected with result code: {}".format(rc))
-    
+
     reconnect_count, reconnect_delay = 0, FIRST_RECONNECT_DELAY
     if MAX_RECONNECT_COUNT == -1:
-        max_reconnect_attempts = float('inf')  # Infinite attempts
+        max_reconnect_attempts = float("inf")  # Infinite attempts
     else:
         max_reconnect_attempts = MAX_RECONNECT_COUNT
     # Attempting reconnection with exponential backoff
@@ -66,7 +68,9 @@ def on_disconnect(client, userdata, rc):
         reconnect_delay = min(reconnect_delay, MAX_RECONNECT_DELAY)
         reconnect_count += 1
 
-    logging.info("Reconnect failed after {} attempts. Exiting...".format(reconnect_count))
+    logging.info(
+        "Reconnect failed after {} attempts. Exiting...".format(reconnect_count)
+    )
     sys.exit(1)  # Exit the program
 
 
@@ -149,14 +153,18 @@ class MQTTEngine:
         self.tls_ca_cert = config["tls"]["ca"]
         self.tls_certfile = config["tls"]["cert"]
         self.tls_keyfile = config["tls"]["key"]
-        
+
         self.client = mqtt.Client(client_id=self.client_id)
-        
-                # Set TLS configuration if provided
+
+        # Set TLS configuration if provided
         if self.tls_ca_cert and self.tls_certfile and self.tls_keyfile:
-            self.client.tls_set(ca_certs=self.tls_ca_cert, certfile=self.tls_certfile,
-                                 keyfile=self.tls_keyfile, tls_version=ssl.PROTOCOL_TLS)
-            
+            self.client.tls_set(
+                ca_certs=self.tls_ca_cert,
+                certfile=self.tls_certfile,
+                keyfile=self.tls_keyfile,
+                tls_version=ssl.PROTOCOL_TLS,
+            )
+
         self.client.on_connect = on_connect
         self.client.on_publish = on_publish
         self.client.on_disconnect = on_disconnect
@@ -172,7 +180,7 @@ class MQTTEngine:
         None
         """
         self.client.connect(self.broker, self.port, keepalive=60)
-        #self.client.loop_start()
+        # self.client.loop_start()
 
     def disconnect(self):
         """

@@ -99,9 +99,33 @@ services:
     deploy:
       resources:
         limits:
-          memory: 2.5G
+          memory: 1.2G
         reservations:
-          memory: 2G
+          memory: 1G
 
+
+  gpio-handler:
+    container_name: gpio-handler  # Name the databus container
+    restart: unless-stopped
+    build:
+      context: ./gpio-handler  # Path to the databus Dockerfile
+      dockerfile: Dockerfile
+    depends_on:
+      - databus  # Ensure the databus service starts before the backend
+    volumes:
+      # Bind volume with certificates at runtime
+      - ./gpio-handler/certs:/app/certs
+      - ./gpio-handler/config.yaml:/app/config.yaml
+      - ./gpio-handler/log:/app/log
+    networks:
+      - alpr-network  # Connect to the alpr-network
+    devices:
+      - /dev/gpiomem
+    deploy:
+      resources:
+        limits:
+          memory: 64M  # Limit the maximum memory usage
+        reservations:
+          memory: 32M  # Reserve memory
 networks:
   alpr-network:

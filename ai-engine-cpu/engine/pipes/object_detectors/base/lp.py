@@ -14,10 +14,10 @@ class LicensePlateDetector:
 
         self.confidence_threshold = config.get("threshold", 0.5)
         self.top_n = config.get("top_n", 5)
-        self.iou_threshold= config.get("iou_threshold", 0.5)
+        self.iou_threshold = config.get("iou_threshold", 0.5)
 
     def load_model(self, engine_file_path):
-        self.engine = rt.InferenceSession(engine_file_path) 
+        self.engine = rt.InferenceSession(engine_file_path)
         self.input_name = self.engine.get_inputs()[0].name
         self.output_names = [s.name for s in self.engine.get_outputs()]
         return self.engine
@@ -25,18 +25,20 @@ class LicensePlateDetector:
     def preprocess(self, img, need_preprocess=True):
         if need_preprocess:
             image_data = cv2.resize(img, (self.width, self.height)).astype(np.float32)
-        image_data = np.transpose(image_data, (2, 0, 1))  
+        image_data = np.transpose(image_data, (2, 0, 1))
         image_data = np.expand_dims(image_data, axis=0)
         return image_data
 
     def initial_filtering(self, scores, boxes):
         # Flatten the confidence scores and box coordinates
-        confidence_scores = scores[:, 1]  
+        confidence_scores = scores[:, 1]
         boxes_above_threshold = boxes[confidence_scores > self.confidence_threshold]
-        confidences_above_threshold = confidence_scores[confidence_scores > self.confidence_threshold]
+        confidences_above_threshold = confidence_scores[
+            confidence_scores > self.confidence_threshold
+        ]
 
         # Sort by confidence and select the top N detections
-        top_indices = np.argsort(confidences_above_threshold)[-self.top_n:][::-1]  
+        top_indices = np.argsort(confidences_above_threshold)[-self.top_n :][::-1]
 
         top_boxes = boxes_above_threshold[top_indices]
         top_confidences = confidences_above_threshold[top_indices]
@@ -48,13 +50,15 @@ class LicensePlateDetector:
 
         # Extract scores and boxes
         scores = np.squeeze(out[0], axis=0)  # shape: (3000, 2)
-        boxes = np.squeeze(out[1], axis=0)   # shape: (3000, 4)
+        boxes = np.squeeze(out[1], axis=0)  # shape: (3000, 4)
 
         # Perform initial filtering
         top_boxes, top_confidences = self.initial_filtering(scores, boxes)
 
         # Apply Non-Maximum Suppression (NMS)
-        final_boxes, final_confidences  = self.non_maximum_suppression(top_boxes, top_confidences)
+        final_boxes, final_confidences = self.non_maximum_suppression(
+            top_boxes, top_confidences
+        )
 
         # Prepare the list of detection objects
         detections = []
@@ -64,7 +68,7 @@ class LicensePlateDetector:
             x_max = box[2]
             y_max = box[3]
 
-            detection = type('Detection', (object,), {})()
+            detection = type("Detection", (object,), {})()
             detection.Left = x_min
             detection.Right = x_max
             detection.Top = y_min
@@ -72,7 +76,7 @@ class LicensePlateDetector:
             detection.Confidence = confidence
 
             detections.append(detection)
-        
+
         return detections
 
     def non_maximum_suppression(self, boxes, confidences):
@@ -104,7 +108,6 @@ class LicensePlateDetector:
 
             indices_to_keep = np.where(iou <= self.iou_threshold)[0]
             order = order[indices_to_keep + 1]
-
 
         final_boxes = boxes[keep]
         final_confidences = confidences[keep]
