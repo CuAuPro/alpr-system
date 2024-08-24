@@ -1,5 +1,3 @@
-import RPi.GPIO as GPIO
-
 import json
 import logging
 import threading
@@ -8,7 +6,7 @@ from typing import Dict, Any
 from logger.logger import init_logger
 from engine.mqtt import MQTTEngine
 from engine.utils import load_config
-
+from engine.gpio import get_gpio_driver, GPIODriverBase
 
 class RampController:
     """
@@ -25,7 +23,7 @@ class RampController:
         CLOSE_PIN (int): GPIO pin number for closing the ramp gate.
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: Dict[str, Any], GPIODriver: GPIODriverBase) -> None:
         """
         Initialize the RampController.
 
@@ -33,6 +31,7 @@ class RampController:
             config (dict): Configuration dictionary containing necessary parameters.
         """
         self.config = config
+        self.GPIODriver = GPIODriver
         self.ramp_is_open = False
         self.ignore_new_requests = False
         self.ramp_open_timer = None
@@ -45,24 +44,25 @@ class RampController:
         Initialize GPIO pins based on configuration.
         """
         try:
+            self.GPIODriver.initialize()  # Initialize GPIO Driver
+            
             self.OPEN_PIN = self.config["gate"]["open"]["pin"]
-            GPIO.setmode(GPIO.BCM)
-            GPIO.setup(
+            self.GPIODriver.set_mode(
                 self.OPEN_PIN,
-                GPIO.OUT,
+                self.GPIODriver.OUT,
                 initial=(
-                    GPIO.HIGH if self.config["gate"]["open"]["inverse"] else GPIO.LOW
+                    self.GPIODriver.HIGH if self.config["gate"]["open"]["inverse"] else self.GPIODriver.LOW
                 ),
             )
             if "close" in self.config["gate"] and "pin" in self.config["gate"]["close"]:
                 self.CLOSE_PIN = self.config["gate"]["close"]["pin"]
-                GPIO.setup(
+                self.GPIODriver.set_mode(
                     self.CLOSE_PIN,
-                    GPIO.OUT,
+                    self.GPIODriver.OUT,
                     initial=(
-                        GPIO.LOW
+                        self.GPIODriver.LOW
                         if self.config["gate"]["close"]["inverse"]
-                        else GPIO.HIGH
+                        else self.GPIODriver.HIGH
                     ),
                 )
         except Exception as e:
@@ -156,10 +156,10 @@ class RampController:
         Open the ramp gate.
         """
         try:
-            GPIO.output(
-                self.OPEN_PIN,
-                GPIO.HIGH if not self.config["gate"]["open"]["inverse"] else GPIO.LOW,
-            )
+            self.GPIODriver.output(
+                    self.OPEN_PIN,
+                    self.GPIODriver.HIGH if not self.config["gate"]["open"]["inverse"] else self.GPIODriver.LOW,
+                )
             logging.debug("Ramp opened")
             self.ramp_is_open = True
             self.ignore_new_requests = True
@@ -174,9 +174,9 @@ class RampController:
         Close the ramp gate.
         """
         try:
-            GPIO.output(
+            self.GPIODriver.output(
                 self.OPEN_PIN,
-                GPIO.LOW if not self.config["gate"]["open"]["inverse"] else GPIO.HIGH,
+                self.GPIODriver.LOW if not self.config["gate"]["open"]["inverse"] else self.GPIODriver.HIGH,
             )
             logging.debug("Ramp closed")
             self.ramp_is_open = False
@@ -226,7 +226,7 @@ class RampController:
             logging.error("Keyboard interrupt detected, exiting...")
         finally:
             self.mqtt_engine.disconnect()
-            GPIO.cleanup()
+            self.GPIODriver.cleanup()
 
 
 if __name__ == "__main__":
@@ -234,6 +234,9 @@ if __name__ == "__main__":
         # Load configuration
         config = load_config("config.yaml")
 
+        # Determine the platform and set up GPIO utilities
+        platform = config.get("platform", "jetson")  # Default to 'jetson'
+        GPIODriver = get_gpio_driver(platform)
         # Map logging level string to numerical constant
         log_level = {
             "debug": logging.DEBUG,
@@ -255,7 +258,7 @@ if __name__ == "__main__":
         )
 
         # Create RampController instance
-        ramp_controller = RampController(config)
+        ramp_controller = RampController(config, GPIODriver)
         ramp_controller.start()
 
     except Exception as e:

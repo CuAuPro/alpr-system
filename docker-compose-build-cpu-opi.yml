@@ -1,0 +1,131 @@
+version: '3.8'
+
+services:
+
+
+  nginx:
+    container_name: alpr-nginx
+    restart: unless-stopped
+    image: nginx
+    ports:
+        - 80:80
+        - 443:443
+    networks:
+      - alpr-network
+    volumes:
+        - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+        - ./nginx/certs/https:/etc/nginx/certs
+
+  frontend:
+    container_name: alpr-frontend  # Name the frontend container
+    restart: unless-stopped
+    build:
+      context: ./frontend  # Path to the frontend Dockerfile
+    depends_on:
+      - backend  # Ensure the backend service starts before the frontend
+    volumes:
+      # Bind volume with certificates at runtime
+      - ./frontend/certs/https:/etc/nginx/certs
+    networks:
+      - alpr-network  # Connect to the alpr-network
+    deploy:
+      resources:
+        limits:
+          memory: 64M  # Limit the maximum memory usage
+        reservations:
+          memory: 32M  # Reserve memory
+
+
+  backend:
+    container_name: alpr-backend  # Name the backend container
+    restart: unless-stopped
+    build:
+      context: ./backend  # Path to the backend Dockerfile
+    environment:
+      - MQTT_BROKER=databus:8883  # Set the MQTT broker address
+      - MQTT_SSL=true  # Enable SSL for MQTT
+    depends_on:
+      - databus  # Ensure the databus service starts before the backend
+    networks:
+      - alpr-network  # Connect to the alpr-network
+    deploy:
+      resources:
+        limits:
+          memory: 128M  # Limit the maximum memory usage to 128MB
+        reservations:
+          memory: 90M  # Reserve 90MB of memory
+    volumes:
+      - ./backend/database:/app/backend/database
+      # Bind volume with certificates at runtime
+      - ./backend/certs:/app/backend/certs
+      - ./backend/env:/app/backend/env
+
+  databus:
+    container_name: alpr-databus  # Name the databus container
+    restart: unless-stopped  # Restart policy for the databus container
+    build:
+      context: ./databus  # Path to the databus Dockerfile
+    ports:
+      - "8883:8883"  # Map host port 8883 to container port 8883 for MQTT
+    volumes:
+      # Bind volume with certificates at runtime
+      - ./databus:/etc/mosquitto
+    networks:
+      - alpr-network  # Connect to the alpr-network
+    hostname: "databus"  # Set the hostname for the databus container
+    deploy:
+      resources:
+        limits:
+          memory: 64M  # Limit the maximum memory usage
+        reservations:
+          memory: 32M  # Reserve memory
+
+  ai-engine-cpu:
+    container_name: alpr-ai-engine-cpu
+    restart: unless-stopped
+    build:
+      context: ./ai-engine-cpu  # Path to the Dockerfile
+    depends_on:
+      - databus  # Ensure the databus service starts before the backend
+    networks:
+      - alpr-network  # Connect to the alpr-network
+    ports:
+      - "8554:8554"  # Example RTSP server port
+    volumes:
+      # Bind volume with certificates at runtime
+      - ./ai-engine-cpu/certs:/app/certs
+      - ./ai-engine-cpu/config.yaml:/app/config.yaml
+      - ./ai-engine-cpu/log:/app/log
+    deploy:
+      resources:
+        limits:
+          memory: 1.2G
+        reservations:
+          memory: 1G
+
+
+  gpio-handler:
+    container_name: gpio-handler  # Name the databus container
+    restart: unless-stopped
+    build:
+      context: ./gpio-handler  # Path to the databus Dockerfile
+      dockerfile: Dockerfile.opi
+    depends_on:
+      - databus  # Ensure the databus service starts before the backend
+    volumes:
+      # Bind volume with certificates at runtime
+      - ./gpio-handler/certs:/app/certs
+      - ./gpio-handler/config.yaml:/app/config.yaml
+      - ./gpio-handler/log:/app/log
+    networks:
+      - alpr-network  # Connect to the alpr-network
+    devices:
+      - /dev/gpiomem
+    deploy:
+      resources:
+        limits:
+          memory: 64M  # Limit the maximum memory usage
+        reservations:
+          memory: 32M  # Reserve memory
+networks:
+  alpr-network:

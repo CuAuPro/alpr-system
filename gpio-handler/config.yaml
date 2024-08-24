@@ -1,3 +1,6 @@
+
+platform: opi  # or 'opi' for Orange Pi, or 'jetson' for NVIDIA Jetson
+
 # MQTT client configuration
 mqtt:
   broker: "databus"
