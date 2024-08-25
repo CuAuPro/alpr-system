@@ -57,7 +57,7 @@ net = LicensePlateDetector(config["engine"])
 net.load_model(config["engine"]["model"])
 
 try:
-    input_stream = cv2.VideoCapture(config["camera"][0]["input_stream"], cv2.CAP_FFMPEG)
+    input_stream = cv2.VideoCapture(config["camera"][0]["input_stream"])
 except Exception as e:
     logging.error(f"Could not connect to video source: {e}")
     sys.exit(1)
