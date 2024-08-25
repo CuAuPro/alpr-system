@@ -34,32 +34,12 @@ init_logger(
     print_to_stdout=config["logging"]["print_to_stdout"],
     log_in_file=config["logging"]["log_in_file"],
 )
-
 # Extract camera configuration
 camera_config = config["camera"][0]
 input_image_width = camera_config["image_size"]["width"]
 input_image_height = camera_config["image_size"]["height"]
 camera_regions = camera_config["regions"]
 
-# MQTT configuration
-mqtt_config = {
-    "broker": config["mqtt"]["broker"],
-    "port": config["mqtt"]["port"],
-    "clientId": config["mqtt"]["clientId"],
-    "auth": {
-        "username": config["mqtt"]["auth"]["username"],
-        "password": config["mqtt"]["auth"]["password"],
-    },
-    "tls": {
-        "ca": config["mqtt"]["tls"]["ca"],
-        "cert": config["mqtt"]["tls"]["cert"],
-        "key": config["mqtt"]["tls"]["key"],
-    },
-}
-mqtt_engine = MQTTEngine(mqtt_config)
-mqtt_engine.client.tls_insecure_set(True)
-mqtt_engine.connect()
-mqtt_engine.client.loop_start()
 
 logging.debug("[OCR] Initializing OCR model...")
 ocr = Ocr()
@@ -77,7 +57,7 @@ net = LicensePlateDetector(config["engine"])
 net.load_model(config["engine"]["model"])
 
 try:
-    input_stream = cv2.VideoCapture(config["camera"][0]["input_stream"])
+    input_stream = cv2.VideoCapture(config["camera"][0]["input_stream"], cv2.CAP_FFMPEG)
 except Exception as e:
     logging.error(f"Could not connect to video source: {e}")
     sys.exit(1)
@@ -122,7 +102,6 @@ while True:
                 "error": "Max retries exceeded",
                 "message": f"Error capturing and processing image: {e}",
             }
-            mqtt_engine.publish(mqtt_message, "alpr/ai-engine/error")
             # Send your MQTT message or handle the error accordingly
             logging.error("Max retries exceeded. Exiting...")
             sys.exit(1)
@@ -136,7 +115,6 @@ while True:
                 "error": "Max retries exceeded",
                 "message": f"Unexpected error capturing and processing image: {e}",
             }
-            mqtt_engine.publish(mqtt_message, "alpr/ai-engine/error")
             logging.error("Max retries exceeded. Exiting...")
             sys.exit(1)
         time.sleep(5)  # Short delay before the next attempt
@@ -182,7 +160,6 @@ while True:
 
                     data = {}
                     data["licensePlate"] = license_plate_text
-                    mqtt_engine.publish(data, "alpr/ramp/req")
                     # Draw the detection and text on the full-sized raw_img
                     cv2.rectangle(
                         raw_img,

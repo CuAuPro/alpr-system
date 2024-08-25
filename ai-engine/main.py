@@ -131,18 +131,33 @@ while True:
         raw_img = jetson.utils.cudaToNumpy(img)
         raw_img = cv2.resize(raw_img, (input_image_width, input_image_height))
         retry_counter = 0  # Reset counter on success
-
-    except Exception as e:
-        logging.error(f"Error capturing and processing image: {e}")
+    except ValueError as e:
+        logging.warning("Attempting to reconnect to RTSP stream...")
+        input_stream = jetson.utils.videoSource(config['camera'][0]['input_stream'], argv)
         retry_counter += 1
         if retry_counter > max_retries:
             mqtt_message = {
                 "error": "Max retries exceeded",
-                "message": f"Error capturing and processing image: {e}"
+                "message": f"Error capturing and processing image: {e}",
             }
             mqtt_engine.publish(mqtt_message, "alpr/ai-engine/error")
-            retry_counter = 0  # Reset counter to allow continued retries
-        time.sleep(5)  # Wait for a short period before trying again
+            # Send your MQTT message or handle the error accordingly
+            logging.error("Max retries exceeded. Exiting...")
+            sys.exit(1)
+        time.sleep(5)  # Short delay before the next attempt
+        continue
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
+        retry_counter += 1
+        if retry_counter > max_retries:
+            mqtt_message = {
+                "error": "Max retries exceeded",
+                "message": f"Unexpected error capturing and processing image: {e}",
+            }
+            mqtt_engine.publish(mqtt_message, "alpr/ai-engine/error")
+            logging.error("Max retries exceeded. Exiting...")
+            sys.exit(1)
+        time.sleep(5)  # Short delay before the next attempt
         continue
 
     # Extract regions based on the configuration
