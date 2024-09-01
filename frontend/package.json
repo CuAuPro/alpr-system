@@ -40,7 +40,7 @@
     "@angular-eslint/eslint-plugin-template": "17.5.2",
     "@angular-eslint/schematics": "18.0.1",
     "@angular-eslint/template-parser": "17.5.2",
-    "@angular/cli": "^17.3.7",
+    "@angular/cli": "^18.2.2",
     "@angular/compiler-cli": "^17.3.0",
     "@angular/localize": "^17.3.0",
     "@hey-api/openapi-ts": "^0.46.3",
