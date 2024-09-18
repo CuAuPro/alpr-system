@@ -74,7 +74,7 @@ jobs:
       # Build and push Docker image with Buildx (don't push on PR)
       - name: Build and push Docker image
         id: build-and-push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           platforms: linux/arm64, linux/amd64
           file: ${{ inputs.dockerfile }}
